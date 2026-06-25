@@ -304,8 +304,8 @@ export default function App() {
         {/* Top Sticky Header & Horizontal Navigation Hub */}
         <div className="sticky top-0 z-50 w-full flex flex-col" id="top-sticky-header-container">
           {/* Row 1: Brand & Logos & Controls */}
-          <header className={`px-4 py-0.5 sm:px-6 lg:px-8 border-b transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 ${
-            darkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'
+          <header className={`px-4 py-1 sm:px-6 lg:px-8 border-b backdrop-blur-xl transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 ${
+            darkMode ? 'border-slate-800/50 bg-slate-900/75' : 'border-slate-200/50 bg-white/75'
           }`} id="top-navbar">
             
             {/* Two Official Logos side-by-side with a clean separator */}
@@ -355,10 +355,10 @@ export default function App() {
               {/* Dark Mode Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                className={`p-2 rounded-full backdrop-blur-lg border shadow-lg transition-all cursor-pointer ${
                   darkMode 
-                    ? 'border-slate-800 bg-slate-900 text-amber-500 hover:bg-slate-800' 
-                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-orange-500'
+                    ? 'border-slate-700/30 bg-slate-800/80 text-amber-500 hover:bg-slate-700' 
+                    : 'border-white/20 bg-white/80 text-slate-600 hover:bg-slate-100 hover:text-orange-500'
                 }`}
                 title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 id="theme-toggle-btn"
@@ -387,14 +387,14 @@ export default function App() {
           </header>
 
           {/* Row 2: Desktop Horizontal Navigation Hub (hidden on mobile, visible on lg) */}
-          <nav className={`hidden lg:block border-b transition-colors duration-300 ${
+          <nav className={`hidden lg:block border-b backdrop-blur-xl transition-all duration-300 ${
             darkMode 
-              ? 'border-slate-850 bg-slate-950/90' 
-              : 'border-slate-200 bg-slate-100/80'
-          } px-4 py-2 sm:px-6 lg:px-8`} id="horizontal-navigation-hub">
+              ? 'border-slate-800/50 bg-slate-900/70' 
+              : 'border-slate-200/50 bg-white/70'
+          } px-4 py-3 sm:px-6 lg:px-8`} id="horizontal-navigation-hub">
             <div className="max-w-full mx-auto w-full">
               <div 
-                className="flex flex-row flex-nowrap items-center justify-center gap-x-5 overflow-x-auto no-scrollbar py-1 whitespace-nowrap w-full" 
+                className="flex flex-wrap justify-center gap-y-3 gap-x-4 py-1.5 w-full" 
                 id="horizontal-tab-list"
               >
                 {PORTAL_TABS.map((tab) => {
@@ -497,10 +497,10 @@ export default function App() {
         <div className="w-full px-4 sm:px-6 lg:px-8 mt-4 mb-2" id="global-search-bar-row">
           <div className="max-w-4xl mx-auto w-full" id="global-search-container">
             <div 
-              className={`relative flex items-center w-full rounded-full border shadow-xs transition-all duration-300 ${
+              className={`relative flex items-center w-full rounded-full border shadow-sm backdrop-blur-md transition-all duration-300 ${
                 darkMode 
-                  ? 'border-slate-800 bg-slate-900 text-white shadow-slate-950/25 focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-orange-500/20' 
-                  : 'border-slate-200 bg-white text-slate-800 shadow-slate-200/40 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20'
+                  ? 'border-slate-800/50 bg-slate-900/60 text-white shadow-slate-950/25 focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-orange-500/20' 
+                  : 'border-slate-200/50 bg-white/60 text-slate-800 shadow-slate-200/40 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20'
               }`}
               id="global-search-pill"
             >
@@ -1175,7 +1175,7 @@ export default function App() {
                   Mechatronics Program · VGU
                 </h2>
                 <p className="text-xs leading-relaxed max-w-4xl" id="footer-office-info">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Program Office:</span>{' '}
+                  <span className="font-bold text-slate-800 dark:text-slate-300">Program Office:</span>{' '}
                   Assoc. Prof. Do Xuan Phu - Academic Coordinator (Building 5, Room 419 ·{' '}
                   <a href="mailto:phu.dx@vgu.edu.vn" className="text-orange-500 hover:underline">phu.dx@vgu.edu.vn</a>)
                   {' '}|{' '}
