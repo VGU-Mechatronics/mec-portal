@@ -73,6 +73,37 @@ export default function App() {
   const [faqOpenState, setFaqOpenState] = useState<{ [key: number]: boolean }>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [showHeader, setShowHeader] = useState<boolean>(true);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      setIsScrolled(currentScrollY > 20);
+      
+      if (isMobileMenuOpen) {
+        setShowHeader(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setShowHeader(false);
+      } else {
+        setShowHeader(true);
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     localStorage.setItem('mec_portal_theme', darkMode ? 'dark' : 'light');
@@ -300,97 +331,115 @@ export default function App() {
       
       {/* Main Content Stage */}
       <div className="flex-1 flex flex-col min-w-0" id="main-content-wrapper">
-        
-        {/* Top Sticky Header & Horizontal Navigation Hub */}
-        <div className="sticky top-0 z-50 w-full flex flex-col" id="top-sticky-header-container">
-          {/* Row 1: Brand & Logos & Controls */}
-          <header className={`px-4 py-1 sm:px-6 lg:px-8 border-b backdrop-blur-xl transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 ${
-            darkMode ? 'border-slate-800/50 bg-slate-900/75' : 'border-slate-200/50 bg-white/75'
-          }`} id="top-navbar">
-            
-            {/* Two Official Logos side-by-side with a clean separator */}
-            <div className="flex items-center space-x-3 sm:space-x-4" id="navbar-left-container">
-              {/* HAW Hamburg Official Logo Slot */}
-              <div className="flex items-center" id="haw-logo-wrapper">
-                <img 
-                  src="https://i.postimg.cc/Y9YKTnDp/haw-hamburg-seeklogo.png" 
-                  alt="HAW Hamburg University" 
-                  className="h-12 md:h-14 w-auto object-contain bg-transparent transition-all duration-300 hover:scale-102"
-                  referrerPolicy="no-referrer"
-                  id="haw-official-logo"
-                />
+               {/* Top Sticky Header & Horizontal Navigation Hub */}
+        <div className={`sticky top-0 z-50 w-full flex flex-col transition-all duration-300 ${
+          isScrolled 
+            ? darkMode 
+              ? 'bg-slate-900 shadow-md border-b border-slate-800/80' 
+              : 'bg-white shadow-md border-b border-slate-200/80'
+            : 'bg-transparent'
+        }`} id="top-sticky-header-container">
+          
+          {/* Row 1: Brand & Logos & Controls with smooth slide transition */}
+          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            showHeader 
+              ? 'max-h-[90px] opacity-100' 
+              : 'max-h-0 opacity-0 pointer-events-none'
+          }`}>
+            <header className={`px-4 py-1 sm:px-6 lg:px-8 border-b transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 ${
+              isScrolled 
+                ? 'bg-transparent border-transparent' 
+                : darkMode 
+                  ? 'border-slate-800/50 bg-slate-900/75' 
+                  : 'border-slate-200/50 bg-white/75'
+            }`} id="top-navbar">
+              
+              {/* Two Official Logos side-by-side with a clean separator */}
+              <div className="flex items-center space-x-3 sm:space-x-4" id="navbar-left-container">
+                {/* HAW Hamburg Official Logo Slot */}
+                <div className="flex items-center" id="haw-logo-wrapper">
+                  <img 
+                    src="https://i.postimg.cc/Y9YKTnDp/haw-hamburg-seeklogo.png" 
+                    alt="HAW Hamburg University" 
+                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain bg-transparent transition-all duration-300 hover:scale-102"
+                    referrerPolicy="no-referrer"
+                    id="haw-official-logo"
+                  />
+                </div>
+
+                {/* Clean separator */}
+                <div className={`h-8 md:h-[38.4px] w-[1px] transition-colors duration-300 ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`} id="logos-separator" />
+
+                {/* VGU Official Logo Slot */}
+                <div className="flex items-center" id="vgu-logo-wrapper">
+                  <img 
+                    src="https://i.postimg.cc/vHQFSvWh/VGU-Logo-(1).png" 
+                    alt="Vietnamese-German University (VGU)" 
+                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain px-1 bg-transparent transition-all duration-300 hover:scale-102"
+                    referrerPolicy="no-referrer"
+                    id="vgu-official-logo"
+                  />
+                </div>
+
+                {/* Small subtle academic portal title next to logos */}
+                <div className={`hidden lg:flex flex-col border-l pl-4 py-1 justify-center transition-colors duration-300 ${
+                  darkMode ? 'border-slate-800' : 'border-slate-200'
+                }`} id="portal-title-block">
+                  <h1 className={`font-sans font-black text-[19.2px] md:text-[24px] tracking-tight leading-none flex items-center transition-colors duration-300 ${
+                    darkMode ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    MEC <span className="bg-orange-500 text-white font-bold text-[9.6px] uppercase tracking-widest px-2 py-0.5 rounded-md shadow-sm ml-1.5 inline-flex items-center justify-center leading-none transition-all duration-300 ease-in-out cursor-pointer hover:bg-orange-500/25 hover:backdrop-blur-lg hover:border hover:border-orange-500/30 hover:text-orange-500 hover:shadow-[0_4px_15px_-3px_rgba(249,115,22,0.35)] dark:hover:shadow-[0_4px_15px_-3px_rgba(249,115,22,0.5)]">PORTAL</span>
+                  </h1>
+                  <span className="text-[9.6px] md:text-[11.2px] font-medium tracking-widest uppercase mt-1 border-l-2 border-slate-700 dark:border-slate-500 pl-2 ml-0.5 text-slate-400 dark:text-slate-300 opacity-90 leading-none transition-colors duration-300">
+                    Mechatronics Engineering
+                  </span>
+                </div>
               </div>
 
-              {/* Clean separator */}
-              <div className={`h-10 md:h-12 w-[1px] transition-colors duration-300 ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`} id="logos-separator" />
+              {/* Right Header Controls: Dark Mode and Mobile Hamburger Menu */}
+              <div className="flex items-center justify-end space-x-2.5 sm:space-x-3" id="navbar-controls">
+                {/* Dark Mode Toggle Button */}
+                <button
+                  onClick={toggleTheme}
+                  className={`p-2 rounded-full backdrop-blur-lg border shadow-lg transition-all duration-300 ease-in-out cursor-pointer ${
+                    darkMode 
+                      ? 'border-slate-700/30 bg-slate-800/80 text-amber-500 hover:bg-white/20 hover:border-white/30 hover:shadow-[0_4px_15px_-3px_rgba(255,255,255,0.15)] hover:backdrop-blur-lg' 
+                      : 'border-slate-200 bg-white/80 text-slate-600 hover:bg-slate-500/10 hover:border-slate-900/10 hover:shadow-md hover:backdrop-blur-lg hover:text-orange-500'
+                  }`}
+                  title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                  id="theme-toggle-btn"
+                >
+                  {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-600" />}
+                </button>
 
-              {/* VGU Official Logo Slot */}
-              <div className="flex items-center" id="vgu-logo-wrapper">
-                <img 
-                  src="https://i.postimg.cc/vHQFSvWh/VGU-Logo-(1).png" 
-                  alt="Vietnamese-German University (VGU)" 
-                  className="h-12 md:h-14 w-auto object-contain px-1 bg-transparent transition-all duration-300 hover:scale-102"
-                  referrerPolicy="no-referrer"
-                  id="vgu-official-logo"
-                />
+                {/* Mobile Hamburger Menu button */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className={`p-2 rounded-lg border transition-all duration-300 ease-in-out cursor-pointer lg:hidden ${
+                    darkMode 
+                      ? isMobileMenuOpen 
+                        ? 'bg-slate-800 text-orange-400 border-orange-500' 
+                        : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-white/20 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-lg hover:text-orange-400'
+                      : isMobileMenuOpen 
+                        ? 'bg-slate-50 text-orange-500 border-orange-200' 
+                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-500/10 hover:backdrop-blur-lg hover:border-slate-900/10 hover:shadow-md hover:text-orange-500'
+                  }`}
+                  title="Toggle Menu"
+                  id="hamburger-menu-btn"
+                >
+                  {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                </button>
               </div>
-
-              {/* Small subtle academic portal title next to logos */}
-              <div className={`hidden lg:flex flex-col border-l pl-4 py-1.5 justify-center transition-colors duration-300 ${
-                darkMode ? 'border-slate-800' : 'border-slate-200'
-              }`} id="portal-title-block">
-                <h1 className={`font-sans font-black text-2xl md:text-3xl tracking-tight leading-none flex items-center transition-colors duration-300 ${
-                  darkMode ? 'text-white' : 'text-slate-900'
-                }`}>
-                  MEC <span className="bg-orange-500 text-white font-bold text-xs uppercase tracking-widest px-2.5 py-0.5 rounded-md shadow-sm ml-2 inline-flex items-center justify-center leading-none">PORTAL</span>
-                </h1>
-                <span className="text-xs md:text-sm font-medium tracking-widest uppercase mt-1 border-l-2 border-slate-700 dark:border-slate-500 pl-3 ml-1 text-slate-400 dark:text-slate-300 opacity-90 leading-none transition-colors duration-300">
-                  Mechatronics Engineering
-                </span>
-              </div>
-            </div>
-
-            {/* Right Header Controls: Dark Mode and Mobile Hamburger Menu */}
-            <div className="flex items-center justify-end space-x-2.5 sm:space-x-3" id="navbar-controls">
-              {/* Dark Mode Toggle Button */}
-              <button
-                onClick={toggleTheme}
-                className={`p-2 rounded-full backdrop-blur-lg border shadow-lg transition-all cursor-pointer ${
-                  darkMode 
-                    ? 'border-slate-700/30 bg-slate-800/80 text-amber-500 hover:bg-slate-700' 
-                    : 'border-white/20 bg-white/80 text-slate-600 hover:bg-slate-100 hover:text-orange-500'
-                }`}
-                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                id="theme-toggle-btn"
-              >
-                {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-600" />}
-              </button>
-
-              {/* Mobile Hamburger Menu button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`p-2 rounded-lg border transition-all cursor-pointer lg:hidden ${
-                  darkMode 
-                    ? isMobileMenuOpen 
-                      ? 'bg-slate-800 text-orange-400 border-orange-500' 
-                      : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-orange-400'
-                    : isMobileMenuOpen 
-                      ? 'bg-slate-50 text-orange-500 border-orange-200' 
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-orange-500'
-                }`}
-                title="Toggle Menu"
-                id="hamburger-menu-btn"
-              >
-                {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-              </button>
-            </div>
-          </header>
+            </header>
+          </div>
 
           {/* Row 2: Desktop Horizontal Navigation Hub (hidden on mobile, visible on lg) */}
-          <nav className={`hidden lg:block border-b backdrop-blur-xl transition-all duration-300 ${
-            darkMode 
-              ? 'border-slate-800/50 bg-slate-900/70' 
-              : 'border-slate-200/50 bg-white/70'
+          <nav className={`hidden lg:block transition-all duration-300 ${
+            isScrolled
+              ? 'bg-transparent border-b border-transparent'
+              : darkMode 
+                ? 'border-b border-slate-800/50 bg-slate-900/70' 
+                : 'border-b border-slate-200/50 bg-white/70'
           } px-4 py-3 sm:px-6 lg:px-8`} id="horizontal-navigation-hub">
             <div className="max-w-full mx-auto w-full">
               <div 
@@ -406,17 +455,21 @@ export default function App() {
                       key={tab.id}
                       id={`nav-btn-${tab.id}`}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center space-x-2.5 px-3.5 py-2 rounded-lg text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex-shrink-0 border ${
+                      className={`flex items-center space-x-2.5 px-3.5 py-2 rounded-lg text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-300 ease-in-out cursor-pointer flex-shrink-0 border ${
                         isActive
                           ? darkMode
-                            ? 'bg-orange-500/15 text-orange-400 border-orange-500/35 shadow-[0_2px_10px_rgba(249,115,22,0.15)] font-bold'
-                            : 'bg-orange-500 text-white border-orange-500/10 shadow-sm font-bold'
+                            ? 'bg-orange-500/20 text-orange-400 border-orange-500/40 shadow-[0_4px_15px_-3px_rgba(249,115,22,0.3)] backdrop-blur-md font-bold'
+                            : 'bg-orange-500/10 text-orange-600 border-orange-500/30 hover:bg-orange-500/15 hover:border-orange-500/40 hover:backdrop-blur-lg hover:shadow-md font-bold'
                           : darkMode
-                            ? 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/60 border-transparent'
-                            : 'text-slate-600 hover:text-slate-900 hover:bg-white border-transparent'
+                            ? 'text-slate-400 hover:text-slate-100 hover:bg-white/20 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-[0_4px_15px_-3px_rgba(255,255,255,0.15)] bg-slate-900/40 border-transparent'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-500/10 hover:backdrop-blur-lg hover:border-slate-900/10 hover:shadow-md bg-white/60 border-transparent'
                       }`}
                     >
-                      <span className={`${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`${
+                        isActive 
+                          ? darkMode ? 'text-orange-400' : 'text-orange-600' 
+                          : 'text-slate-400 dark:text-slate-500'
+                      }`}>
                         {getTabIcon(tab.icon)}
                       </span>
                       <span>{tab.label}</span>
@@ -461,17 +514,21 @@ export default function App() {
                           setActiveTab(tab.id);
                           setIsMobileMenuOpen(false);
                         }}
-                        className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm md:text-base font-semibold transition-all duration-200 cursor-pointer border w-full text-left ${
+                        className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm md:text-base font-semibold transition-all duration-300 ease-in-out cursor-pointer border w-full text-left ${
                           isActive
                             ? darkMode
-                              ? 'bg-orange-500/15 text-orange-400 border-orange-500/35 font-bold'
-                              : 'bg-orange-500 text-white border-orange-500/10 font-bold'
+                              ? 'bg-orange-500/20 text-orange-400 border-orange-500/40 font-bold shadow-md'
+                              : 'bg-orange-500/10 text-orange-600 border-orange-500/30 hover:bg-orange-500/15 hover:border-orange-500/40 hover:backdrop-blur-lg hover:shadow-md font-bold'
                             : darkMode
-                              ? 'text-slate-400 hover:text-slate-100 bg-slate-900/40 border-transparent'
-                              : 'text-slate-600 hover:text-slate-900 bg-white/60 border-transparent'
+                              ? 'text-slate-400 hover:text-slate-100 hover:bg-white/20 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-lg bg-slate-900/40 border-transparent'
+                              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-500/10 hover:backdrop-blur-lg hover:border-slate-900/10 hover:shadow-md bg-white/60 border-transparent'
                         }`}
                       >
-                        <span className={`${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <span className={`${
+                          isActive 
+                            ? darkMode ? 'text-orange-400' : 'text-orange-600' 
+                            : 'text-slate-400 dark:text-slate-500'
+                        }`}>
                           {getTabIcon(tab.icon)}
                         </span>
                         <span className="flex-1">{tab.label}</span>
@@ -491,48 +548,54 @@ export default function App() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        {/* Global Search Bar row */}
-        <div className="w-full px-4 sm:px-6 lg:px-8 mt-4 mb-2" id="global-search-bar-row">
-          <div className="max-w-4xl mx-auto w-full" id="global-search-container">
-            <div 
-              className={`relative flex items-center w-full rounded-full border shadow-sm backdrop-blur-md transition-all duration-300 ${
-                darkMode 
-                  ? 'border-slate-800/50 bg-slate-900/60 text-white shadow-slate-950/25 focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-orange-500/20' 
-                  : 'border-slate-200/50 bg-white/60 text-slate-800 shadow-slate-200/40 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20'
-              }`}
-              id="global-search-pill"
-            >
-              <div className="absolute left-4 flex items-center pointer-events-none" id="search-icon-wrapper">
-                <Search className={`w-4 h-4 transition-colors duration-200 ${
-                  darkMode ? 'text-slate-500' : 'text-slate-400'
-                }`} />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search keywords, documents, schedules, or FAQs across all categories..."
-                className={`w-full py-2.5 pl-11 pr-10 rounded-full text-xs md:text-sm bg-transparent border-0 outline-none focus:outline-none focus:ring-0 placeholder:transition-colors duration-200 ${
+          {/* Global Search Bar row - nested inside the sticky container so it remains sticky too! */}
+          <div className={`w-full px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
+            isScrolled
+              ? 'py-2 bg-transparent border-b border-transparent'
+              : 'py-3 bg-transparent'
+          }`} id="global-search-bar-row">
+            <div className="max-w-4xl mx-auto w-full" id="global-search-container">
+              <div 
+                className={`relative flex items-center w-full rounded-full border shadow-sm backdrop-blur-md transition-all duration-300 ${
                   darkMode 
-                    ? 'text-white placeholder:text-slate-500' 
-                    : 'text-slate-800 placeholder:text-slate-400'
+                    ? 'border-slate-800/50 bg-slate-900/60 text-white shadow-slate-950/25 hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/20 hover:shadow-[0_4px_15px_-3px_rgba(255,255,255,0.15)] focus-within:bg-slate-900/85 focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-orange-500/20' 
+                    : 'border-slate-200 bg-white/60 text-slate-800 shadow-slate-200/40 hover:bg-slate-500/10 hover:backdrop-blur-lg hover:border-slate-900/10 hover:shadow-md focus-within:bg-white/90 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20'
                 }`}
-                id="global-search-input"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className={`absolute right-4 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer ${
-                    darkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-400 hover:text-slate-600'
+                id="global-search-pill"
+              >
+                <div className="absolute left-4 flex items-center pointer-events-none" id="search-icon-wrapper">
+                  <Search className={`w-4 h-4 transition-colors duration-200 ${
+                    darkMode ? 'text-slate-500' : 'text-slate-400'
+                  }`} />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search keywords, documents, schedules, or FAQs across all categories..."
+                  className={`w-full py-2.5 pl-11 pr-10 rounded-full text-xs md:text-sm bg-transparent border-0 outline-none focus:outline-none focus:ring-0 placeholder:transition-colors duration-200 ${
+                    darkMode 
+                      ? 'text-white placeholder:text-slate-500' 
+                      : 'text-slate-800 placeholder:text-slate-400'
                   }`}
-                  title="Clear Search"
-                  id="clear-search-btn"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
+                  id="global-search-input"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className={`absolute right-4 p-1 rounded-full transition-all duration-300 ease-in-out cursor-pointer hover:backdrop-blur-lg ${
+                      darkMode 
+                        ? 'text-slate-400 hover:text-slate-200 hover:bg-white/20 hover:border hover:border-white/30 hover:shadow-lg' 
+                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-500/10 hover:border hover:border-slate-900/10 hover:shadow-md'
+                    }`}
+                    title="Clear Search"
+                    id="clear-search-btn"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -567,10 +630,14 @@ export default function App() {
                 </div>
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`text-xs font-bold underline cursor-pointer transition-colors whitespace-nowrap self-start sm:self-center ${
+                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all duration-300 ease-in-out cursor-pointer whitespace-nowrap self-start sm:self-center hover:backdrop-blur-lg ${
                     totalMatchesCount > 0
-                      ? darkMode ? 'text-orange-300 hover:text-orange-100' : 'text-orange-700 hover:text-orange-950'
-                      : darkMode ? 'text-rose-300 hover:text-rose-100' : 'text-rose-700 hover:text-rose-950'
+                      ? darkMode 
+                        ? 'border-orange-500/20 bg-orange-500/10 text-orange-300 hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:text-white' 
+                        : 'border-orange-200 bg-orange-50 text-orange-700 hover:bg-slate-500/10 hover:border-slate-900/10 hover:shadow-md hover:text-orange-900'
+                      : darkMode 
+                        ? 'border-rose-500/20 bg-rose-500/10 text-rose-300 hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:text-white' 
+                        : 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-slate-500/10 hover:border-slate-900/10 hover:shadow-md hover:text-rose-900'
                   }`}
                   id="search-banner-reset-btn"
                 >
@@ -1123,7 +1190,11 @@ export default function App() {
                         >
                           <button
                             onClick={() => toggleFaq(idx)}
-                            className="w-full px-5 py-4 flex items-center justify-between text-left focus:outline-none cursor-pointer"
+                            className={`w-full px-5 py-4 flex items-center justify-between text-left focus:outline-none cursor-pointer transition-all duration-300 ease-in-out hover:backdrop-blur-lg ${
+                              darkMode 
+                                ? 'hover:bg-white/10 hover:shadow-lg' 
+                                : 'hover:bg-slate-500/10 hover:border-slate-900/10 hover:shadow-md'
+                            }`}
                             id={`faq-btn-${idx}`}
                           >
                             <span className={`text-xs md:text-sm font-bold leading-tight ${

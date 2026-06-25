@@ -60,10 +60,10 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
       href={card.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group block p-5 rounded-xl border transition-all duration-300 relative overflow-hidden h-full cursor-pointer ${
+      className={`group block p-5 rounded-xl border backdrop-blur-md transition-all duration-300 relative overflow-hidden h-full cursor-pointer ${
         darkMode
-          ? 'bg-slate-900/60 border-slate-800 hover:border-orange-500/50 hover:bg-slate-900/90 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)]'
-          : 'bg-white border-slate-200 hover:border-orange-500/50 hover:bg-orange-50/10 hover:shadow-md'
+          ? 'bg-slate-900/60 border-slate-800 hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)]'
+          : 'bg-white border-slate-200 hover:bg-slate-500/10 hover:backdrop-blur-lg hover:border-slate-900/10 hover:shadow-md'
       }`}
       id={`card-${card.title.replace(/\s+/g, '-').toLowerCase()}`}
     >
@@ -82,8 +82,8 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
             </span>
             <div className={`p-1.5 rounded-lg border transition-all duration-300 ${
               darkMode 
-                ? 'bg-slate-950 border-slate-800 group-hover:border-orange-500/40 group-hover:text-orange-400 text-slate-500' 
-                : 'bg-slate-50 border-slate-200 group-hover:border-orange-500/30 group-hover:text-orange-500 text-slate-400'
+                ? 'bg-slate-950 border-slate-800 group-hover:bg-white/20 group-hover:border-white/30 group-hover:text-orange-400 text-slate-500' 
+                : 'bg-slate-50 border-slate-200 group-hover:bg-slate-500/10 group-hover:border-slate-900/10 group-hover:text-orange-500 text-slate-400'
             }`}>
               <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
             </div>
