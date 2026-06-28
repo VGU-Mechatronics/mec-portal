@@ -184,8 +184,9 @@ export default function App() {
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    let ticking = false;
     
-    const handleScroll = () => {
+    const updateScroll = () => {
       const currentScrollY = window.scrollY;
       
       setIsScrolled(currentScrollY > 20);
@@ -193,16 +194,30 @@ export default function App() {
       if (isMobileMenuOpen) {
         setShowHeader(true);
         lastScrollY = currentScrollY;
+        ticking = false;
         return;
       }
       
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
+      const scrollDiff = currentScrollY - lastScrollY;
+      
+      // Threshold check: scroll more than 8px in either direction to trigger header toggle
+      if (Math.abs(scrollDiff) > 8) {
+        if (scrollDiff > 0 && currentScrollY > 80) {
+          setShowHeader(false);
+        } else {
+          setShowHeader(true);
+        }
+        lastScrollY = currentScrollY;
       }
       
-      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -441,8 +456,8 @@ export default function App() {
         <div className={`sticky top-0 z-50 w-full flex flex-col transition-all duration-300 ${
           isScrolled 
             ? darkMode 
-              ? 'bg-slate-900 shadow-md border-b border-slate-800/80' 
-              : 'bg-white shadow-md border-b border-slate-200/80'
+              ? 'bg-slate-950/85 shadow-md border-b border-slate-900/85 backdrop-blur-xl' 
+              : 'bg-white/85 shadow-md border-b border-slate-200/80 backdrop-blur-xl'
             : 'bg-transparent'
         }`} id="top-sticky-header-container">
           
@@ -452,63 +467,175 @@ export default function App() {
               ? 'max-h-[90px] opacity-100' 
               : 'max-h-0 opacity-0 pointer-events-none'
           }`}>
-            <header className={`px-4 py-1 sm:px-6 lg:px-8 border-b transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 ${
+            <header className={`relative overflow-hidden px-4 py-1.5 sm:px-6 lg:px-8 border-b transition-all duration-300 flex flex-row items-center justify-between gap-3 sm:gap-4 backdrop-blur-xl ${
               isScrolled 
                 ? 'bg-transparent border-transparent' 
                 : darkMode 
-                  ? 'border-slate-800/50 bg-slate-900/75' 
-                  : 'border-slate-200/50 bg-white/75'
+                  ? 'border-slate-800/80 bg-slate-950/80 shadow-[0_4px_30px_rgba(0,0,0,0.4)]' 
+                  : 'border-slate-200/90 bg-white/85 shadow-[0_4px_30px_rgba(249,115,22,0.05)]'
             }`} id="top-navbar">
               
+              {/* Mechatronics-themed Interactive & Dynamic Backdrop */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" id="header-mechatronics-background">
+                {/* Technical Grid Pattern - more defined with subtle glow */}
+                <div className={`absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-[size:14px_14px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_80%,transparent_100%)] ${
+                  darkMode ? 'opacity-40' : 'opacity-30'
+                }`} />
+                
+                {/* Vibrant glowing circuit nodes & tech vectors */}
+                <div className="absolute top-1/2 left-[25%] -translate-y-1/2 w-64 h-64 bg-orange-500/15 dark:bg-orange-500/25 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute -top-10 right-[35%] w-48 h-48 bg-blue-500/15 dark:bg-blue-600/25 rounded-full blur-3xl" />
+                <div className="absolute -bottom-10 right-[15%] w-40 h-40 bg-teal-500/10 dark:bg-teal-500/15 rounded-full blur-2xl" />
+                
+                {/* SVG Circuit Trace Line with genuine Electrical/Electronic symbols (Resistor, Capacitor, Ground) */}
+                <svg className="absolute right-[5%] top-0 h-full w-[450px] transition-all duration-300 animate-pulse" style={{ animationDuration: '6s' }} fill="none" viewBox="0 0 450 64">
+                  <defs>
+                    <linearGradient id="circuit-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+                      <stop offset="50%" stopColor="#f97316" stopOpacity="0.7" />
+                      <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.3" />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Circuit path featuring a real Resistor (zigzag) and Capacitor schematic symbols */}
+                  <path 
+                    d="M 0 32 L 90 32 L 110 12 L 140 12 L 144 12 L 147 6 L 152 18 L 157 6 L 162 18 L 167 6 L 172 18 L 175 12 L 210 12 L 230 48 L 270 48 M 270 38 L 270 58 M 274 38 L 274 58 M 274 48 L 330 48 L 350 24 L 450 24" 
+                    stroke="url(#circuit-gradient)" 
+                    strokeWidth="1.5" 
+                    className="transition-all duration-300"
+                  />
+                  
+                  {/* Glowing Connection Nodes & Ground symbols representing Electrical Engineering */}
+                  <circle cx="110" cy="12" r="4" fill="#f97316" className="animate-ping origin-center" style={{ animationDuration: '2s' }} />
+                  <circle cx="110" cy="12" r="2.5" fill="#f97316" />
+                  <circle cx="230" cy="48" r="2.5" fill="#3b82f6" />
+                  <circle cx="350" cy="24" r="2.5" fill="#14b8a6" />
+
+                  {/* Ground symbol branching from node 230,48 */}
+                  <path 
+                    d="M 230 48 L 230 58 M 224 58 L 236 58 M 227 61 L 233 61 M 229 64 L 231 64" 
+                    stroke={darkMode ? '#475569' : '#cbd5e1'} 
+                    strokeWidth="1.2" 
+                  />
+                </svg>
+
+                {/* Robot & AI Interactive Symbols */}
+                <div className={`absolute right-[38%] sm:right-[260px] md:right-[320px] lg:right-[430px] top-1/2 -translate-y-1/2 flex items-center space-x-3.5 transition-all duration-300 ${
+                  darkMode ? 'text-blue-400/25' : 'text-blue-500/35'
+                }`}>
+                  {/* Robot Head / Cybernetic Chassis (Robot symbol) */}
+                  <svg className="w-8 h-8 animate-[bounce_4s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 3h6M12 3v3m-6 3h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+                    <rect x="7.5" y="11" width="2" height="1.5" rx="0.5" fill="currentColor" />
+                    <rect x="14.5" y="11" width="2" height="1.5" rx="0.5" fill="currentColor" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 15h6" />
+                    <circle cx="3" cy="12" r="1.2" fill="currentColor" />
+                    <circle cx="21" cy="12" r="1.2" fill="currentColor" />
+                  </svg>
+
+                  {/* AI Neural Synapse Core (AI symbol) */}
+                  <svg className="w-8 h-8 animate-[pulse_3s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24">
+                    <rect x="8.5" y="8.5" width="7" height="7" rx="1.5" strokeWidth="1.5" />
+                    <path d="M12 8.5V6M12 18v-2.5M8.5 12H6M18 12h-2.5" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="12" cy="4.5" r="1.2" fill="currentColor" />
+                    <circle cx="12" cy="19.5" r="1.2" fill="currentColor" />
+                    <circle cx="4.5" cy="12" r="1.2" fill="currentColor" />
+                    <circle cx="19.5" cy="12" r="1.2" fill="currentColor" />
+                    <path d="M9.5 9.5 L6.5 6.5 M14.5 9.5 L17.5 6.5 M9.5 14.5 L6.5 17.5 M14.5 14.5 L17.5 17.5" strokeDasharray="1.5,1.5" />
+                  </svg>
+                </div>
+
+                {/* Micro Animated Mechanical Gears - more clear, with distinctive colors, positioned to the right and lower to avoid overlapping the circuit trace lines */}
+                <div className={`absolute right-[20%] sm:right-[180px] md:right-[240px] lg:right-[320px] top-[72%] -translate-y-1/2 flex items-center space-x-1 transition-all duration-300 ${
+                  darkMode ? 'text-orange-500/25' : 'text-orange-500/35'
+                }`}>
+                  {/* Gear 1 (Primary Orange Gear) */}
+                  <svg className="w-10 h-10 animate-spin" style={{ animationDuration: '15s' }} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                  {/* Gear 2 (Interlocking Blue/Teal Gear) */}
+                  <svg 
+                    className={`w-6 h-6 animate-spin -mt-2 -ml-3 ${darkMode ? 'text-blue-500/25' : 'text-blue-500/35'}`} 
+                    style={{ animationDuration: '8s', animationDirection: 'reverse' }} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                </div>
+              </div>
+
               {/* Two Official Logos side-by-side with a clean separator */}
-              <div className="flex items-center space-x-3 sm:space-x-4" id="navbar-left-container">
-                {/* HAW Hamburg Official Logo Slot */}
-                <div className="flex items-center" id="haw-logo-wrapper">
+              <div className="relative z-10 flex items-center space-x-3 sm:space-x-4" id="navbar-left-container">
+                {/* HAW Hamburg Official Logo Slot - Hidden on small displays, visible on md and larger */}
+                <a 
+                  href="https://www.haw-hamburg.de/en/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hidden md:flex items-center cursor-pointer" 
+                  id="haw-logo-wrapper"
+                >
                   <img 
                     src="https://i.postimg.cc/Y9YKTnDp/haw-hamburg-seeklogo.png" 
                     alt="HAW Hamburg University" 
-                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain bg-transparent transition-all duration-300 hover:scale-102"
+                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain bg-transparent transition-all duration-300 hover:scale-105"
                     referrerPolicy="no-referrer"
                     id="haw-official-logo"
                   />
-                </div>
+                </a>
 
-                {/* Clean separator */}
-                <div className={`h-8 md:h-[38.4px] w-[1px] transition-colors duration-300 ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`} id="logos-separator" />
+                {/* Clean separator - Hidden on small displays, visible on md and larger */}
+                <div className={`hidden md:block h-8 md:h-[38.4px] w-[1px] transition-colors duration-300 ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`} id="logos-separator" />
 
-                {/* VGU Official Logo Slot */}
-                <div className="flex items-center" id="vgu-logo-wrapper">
+                {/* VGU Official Logo Slot - Hidden on small displays, visible on md and larger */}
+                <a 
+                  href="https://vgu.edu.vn/en/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hidden md:flex items-center cursor-pointer" 
+                  id="vgu-logo-wrapper"
+                >
                   <img 
                     src="https://i.postimg.cc/vHQFSvWh/VGU-Logo-(1).png" 
                     alt="Vietnamese-German University (VGU)" 
-                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain px-1 bg-transparent transition-all duration-300 hover:scale-102"
+                    className="h-[38.4px] md:h-[44.8px] w-auto object-contain px-1 bg-transparent transition-all duration-300 hover:scale-105"
                     referrerPolicy="no-referrer"
                     id="vgu-official-logo"
                   />
-                </div>
+                </a>
 
-                {/* Small subtle academic portal title next to logos */}
-                <div className={`hidden lg:flex flex-col border-l pl-5 py-1 justify-center transition-all duration-300 ${
-                  darkMode ? 'border-slate-800/80' : 'border-slate-200/80'
+                {/* Small subtle academic portal title next to logos - Visible on all screens, bordered on md+ */}
+                <div className={`flex flex-col md:border-l pl-0 md:pl-5 py-1 justify-center transition-all duration-300 ${
+                  darkMode ? 'md:border-slate-800/80' : 'md:border-slate-200/80'
                 }`} id="portal-title-block">
-                  <div className="flex items-center gap-2.5">
-                    <div className={`p-1.5 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                  <div className="flex items-center gap-2 sm:gap-2.5">
+                    <div className={`p-1 sm:p-1.5 rounded-lg flex items-center justify-center transition-all duration-300 ${
                       darkMode 
                         ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]' 
                         : 'bg-orange-50 text-orange-500 border border-orange-100 shadow-[0_2px_8px_rgba(249,115,22,0.1)]'
                     }`}>
-                      <Bot className="w-4 h-4 animate-pulse" />
+                      <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse" />
                     </div>
-                    <h1 className={`font-sans font-black text-base md:text-lg lg:text-xl tracking-[0.12em] leading-none transition-colors duration-300 uppercase ${
-                      darkMode ? 'text-slate-100' : 'text-slate-900'
-                    }`}>
+                    <motion.h1 
+                      whileHover={{ scale: 1.02, letterSpacing: "0.14em" }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      className={`font-sans font-black text-[11px] xs:text-xs sm:text-sm md:text-lg lg:text-xl tracking-[0.12em] leading-none transition-all duration-500 uppercase cursor-default select-none bg-[length:200%_auto] animate-text-shimmer ${
+                        darkMode 
+                          ? 'bg-clip-text text-transparent bg-gradient-to-r from-slate-100 via-orange-400 to-slate-100 hover:via-orange-300 drop-shadow-[0_2px_12px_rgba(249,115,22,0.25)]' 
+                          : 'bg-clip-text text-transparent bg-gradient-to-r from-slate-950 via-orange-600 to-slate-950 hover:via-orange-500 drop-shadow-[0_2px_8px_rgba(249,115,22,0.1)]'
+                      }`}
+                    >
                       Mechatronics Engineering
-                    </h1>
-                    <span className="relative flex h-2 w-2 mr-0.5">
+                    </motion.h1>
+                    <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2 mr-0.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" title="System active"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500" title="System active"></span>
                     </span>
-                    <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[9px] uppercase tracking-[0.12em] px-2 py-0.5 rounded-md shadow-xs inline-flex items-center justify-center leading-none transition-all duration-300 ease-in-out cursor-pointer hover:scale-105 hover:shadow-[0_4px_12px_rgba(249,115,22,0.3)]">
+                    <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[8px] sm:text-[9px] uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-md shadow-xs inline-flex items-center justify-center leading-none transition-all duration-300 ease-in-out cursor-pointer hover:scale-105 hover:shadow-[0_4px_12px_rgba(249,115,22,0.3)]">
                       PORTAL
                     </span>
                   </div>
@@ -516,7 +643,7 @@ export default function App() {
               </div>
 
               {/* Right Header Controls: Dark Mode and Mobile Hamburger Menu */}
-              <div className="flex items-center justify-end space-x-2.5 sm:space-x-3" id="navbar-controls">
+              <div className="relative z-10 flex items-center justify-end space-x-2.5 sm:space-x-3" id="navbar-controls">
                 {/* Dark Mode Toggle Button */}
                 <button
                   onClick={toggleTheme}
@@ -559,10 +686,10 @@ export default function App() {
               : darkMode 
                 ? 'border-b border-slate-800/50 bg-slate-900/70' 
                 : 'border-b border-slate-200/50 bg-white/70'
-          } px-4 py-3 sm:px-6 lg:px-8`} id="horizontal-navigation-hub">
+          } px-4 py-1.5 sm:px-6 lg:px-8`} id="horizontal-navigation-hub">
             <div className="max-w-full mx-auto w-full">
               <div 
-                className="flex flex-wrap justify-center gap-y-3 gap-x-4 py-1.5 w-full" 
+                className="flex flex-wrap justify-center gap-y-1.5 gap-x-2.5 py-1 w-full" 
                 id="horizontal-tab-list"
               >
                 {PORTAL_TABS.map((tab) => {
@@ -574,7 +701,7 @@ export default function App() {
                       key={tab.id}
                       id={`nav-btn-${tab.id}`}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`group flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-102 active:scale-95 cursor-pointer flex-shrink-0 border ${
+                      className={`group flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-102 active:scale-95 cursor-pointer flex-shrink-0 border ${
                         isActive
                           ? darkMode
                             ? 'bg-gradient-to-b from-orange-500/25 via-orange-500/15 to-orange-600/30 text-orange-400 border-t-orange-400/40 border-x-orange-500/20 border-b-orange-600/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_12px_rgba(249,115,22,0.25)] font-bold backdrop-blur-md'
@@ -675,10 +802,10 @@ export default function App() {
           {/* Global Search Bar row - nested inside the sticky container so it remains sticky too! */}
           <div className={`w-full px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
             isScrolled
-              ? 'py-2 bg-transparent border-b border-transparent'
-              : 'py-3 bg-transparent'
+              ? 'py-1 bg-transparent border-b border-transparent'
+              : 'py-1.5 bg-transparent'
           }`} id="global-search-bar-row">
-            <div className="max-w-4xl mx-auto w-full relative" id="global-search-container" ref={searchContainerRef}>
+            <div className="max-w-3xl mx-auto w-full relative" id="global-search-container" ref={searchContainerRef}>
               <div                className={`relative flex items-center w-full rounded-full border shadow-sm backdrop-blur-md transition-all duration-300 ${
                   darkMode 
                     ? 'border-slate-800/50 bg-slate-900/60 text-white shadow-slate-950/25 hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/20 hover:shadow-[0_4px_15px_-3px_rgba(255,255,255,0.15)] focus-within:bg-slate-900/85 focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-orange-500/20' 
@@ -686,8 +813,8 @@ export default function App() {
                 }`}
                 id="global-search-pill"
               >
-                <div className="absolute left-4 flex items-center pointer-events-none" id="search-icon-wrapper">
-                  <Search className={`w-4 h-4 transition-colors duration-200 ${
+                <div className="absolute left-3.5 flex items-center pointer-events-none" id="search-icon-wrapper">
+                  <Search className={`w-3.5 h-3.5 transition-colors duration-200 ${
                     darkMode ? 'text-slate-500' : 'text-slate-400'
                   }`} />
                 </div>
@@ -702,7 +829,7 @@ export default function App() {
                     if (searchQuery) setShowDropdown(true);
                   }}
                   placeholder="Search keywords, documents, schedules, or FAQs across all categories..."
-                  className={`w-full py-2.5 pl-11 pr-10 rounded-full text-xs md:text-sm bg-transparent border-0 outline-none focus:outline-none focus:ring-0 placeholder:transition-colors duration-200 ${
+                  className={`w-full py-1.5 pl-9 pr-9 rounded-full text-xs md:text-sm bg-transparent border-0 outline-none focus:outline-none focus:ring-0 placeholder:transition-colors duration-200 ${
                     darkMode 
                       ? 'text-white placeholder:text-slate-500' 
                       : 'text-slate-800 placeholder:text-slate-400'
@@ -715,15 +842,15 @@ export default function App() {
                       setSearchQuery('');
                       setShowDropdown(false);
                     }}
-                    className={`absolute right-4 p-1.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-110 active:scale-90 cursor-pointer shadow-xs hover:shadow-sm ${
+                    className={`absolute right-3 p-1 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-110 active:scale-90 cursor-pointer shadow-xs hover:shadow-sm ${
                       darkMode 
-                        ? 'text-slate-400 hover:text-slate-200 bg-gradient-to-b from-slate-800/90 to-slate-900/90 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' 
+                        ? 'text-slate-400 hover:text-slate-200 bg-gradient-to-b from-slate-800/90 to-slate-900/90 border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]' 
                         : 'text-slate-400 hover:text-blue-600 bg-gradient-to-b from-white/95 to-slate-100/95 hover:from-sky-50 hover:to-blue-100/40 border border-slate-200/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]'
                     }`}
                     title="Clear Search"
                     id="clear-search-btn"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-3 h-3" />
                   </button>
                 )}
               </div>
@@ -877,8 +1004,12 @@ export default function App() {
           </div>
         </div>
 
-        {/* Dynamic content rendering stage */}
-        <main className={`flex-1 p-5 md:p-8 relative transition-colors duration-300 ${
+        {/* Dynamic content rendering stage with transition padding to prevent scroll jitter */}
+        <main className={`flex-1 relative transition-all duration-300 ${
+          showHeader 
+            ? 'pt-5 md:pt-8' 
+            : 'pt-[76px] md:pt-[96px]'
+        } pb-5 px-5 md:pb-8 md:px-8 ${
           darkMode 
             ? 'bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] bg-slate-950' 
             : 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] bg-slate-50'
@@ -971,8 +1102,10 @@ export default function App() {
                         {filteredInfoChannels.map((channel) => (
                           <div 
                             key={channel.id}
-                            className={`p-5 rounded-xl border transition-all ${
-                              darkMode ? 'bg-slate-900/60 border-slate-800 hover:border-orange-500/40' : 'bg-white border-slate-200 hover:border-orange-500/35 hover:shadow-sm'
+                            className={`p-5 rounded-xl border backdrop-blur-md transition-all duration-300 ${
+                              darkMode 
+                                ? 'bg-gradient-to-b from-slate-900/60 via-slate-900/40 to-slate-950/50 border-t-white/10 border-x-white/5 border-b-black/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:from-slate-800/80 hover:to-slate-900/80 hover:border-orange-500/30 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_12px_40px_rgba(0,0,0,0.3)]' 
+                                : 'bg-gradient-to-b from-white/95 via-white/85 to-slate-100/90 border-t-white border-x-white/80 border-b-slate-200/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_2px_4px_rgba(0,0,0,0.02)] hover:from-sky-50 hover:to-blue-100/70 hover:border-orange-500/30 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_40px_rgba(249,115,22,0.08)]'
                             }`}
                             id={`info-channel-${channel.id}`}
                           >
