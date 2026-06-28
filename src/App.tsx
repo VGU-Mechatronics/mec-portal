@@ -13,6 +13,7 @@ import {
   FileText, 
   Calendar, 
   Cpu, 
+  Bot,
   ShieldAlert, 
   ClipboardList, 
   Briefcase, 
@@ -125,6 +126,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Google Analytics (GA4) Tab Navigation Tracking
+  useEffect(() => {
+    const tabObj = PORTAL_TABS.find(t => t.id === activeTab);
+    const activeTabName = tabObj ? tabObj.label : 'Dashboard';
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'tab_navigation', { 'tab_name': activeTabName });
+    }
+  }, [activeTab]);
+
   const handleItemClick = (item: SearchItem) => {
     let targetTab: PortalTabId = 'guidelines';
     if (item.category === 'Forms & Petitions') targetTab = 'forms';
@@ -158,6 +168,14 @@ export default function App() {
     }
 
     if (item.url) {
+      if (item.url.includes('drive.google.com') || item.url.includes('docs.google.com')) {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'document_download', {
+            'document_title': item.title,
+            'document_url': item.url
+          });
+        }
+      }
       window.open(item.url, '_blank', 'noopener,noreferrer');
     }
 
@@ -470,17 +488,30 @@ export default function App() {
                 </div>
 
                 {/* Small subtle academic portal title next to logos */}
-                <div className={`hidden lg:flex flex-col border-l pl-4 py-1 justify-center transition-colors duration-300 ${
-                  darkMode ? 'border-slate-800' : 'border-slate-200'
+                <div className={`hidden lg:flex flex-col border-l pl-5 py-1 justify-center transition-all duration-300 ${
+                  darkMode ? 'border-slate-800/80' : 'border-slate-200/80'
                 }`} id="portal-title-block">
-                  <h1 className={`font-sans font-black text-[19.2px] md:text-[24px] tracking-tight leading-none flex items-center transition-colors duration-300 ${
-                    darkMode ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    MEC <span className="bg-orange-500 text-white font-bold text-[9.6px] uppercase tracking-widest px-2 py-0.5 rounded-md shadow-sm ml-1.5 inline-flex items-center justify-center leading-none transition-all duration-300 ease-in-out cursor-pointer hover:bg-orange-500/25 hover:backdrop-blur-lg hover:border hover:border-orange-500/30 hover:text-orange-500 hover:shadow-[0_4px_15px_-3px_rgba(249,115,22,0.35)] dark:hover:shadow-[0_4px_15px_-3px_rgba(249,115,22,0.5)]">PORTAL</span>
-                  </h1>
-                  <span className="text-[9.6px] md:text-[11.2px] font-medium tracking-widest uppercase mt-1 border-l-2 border-slate-700 dark:border-slate-500 pl-2 ml-0.5 text-slate-800 dark:text-slate-400 leading-none transition-colors duration-300">
-                    Mechatronics Engineering
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <div className={`p-1.5 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                      darkMode 
+                        ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]' 
+                        : 'bg-orange-50 text-orange-500 border border-orange-100 shadow-[0_2px_8px_rgba(249,115,22,0.1)]'
+                    }`}>
+                      <Bot className="w-4 h-4 animate-pulse" />
+                    </div>
+                    <h1 className={`font-sans font-black text-base md:text-lg lg:text-xl tracking-[0.12em] leading-none transition-colors duration-300 uppercase ${
+                      darkMode ? 'text-slate-100' : 'text-slate-900'
+                    }`}>
+                      Mechatronics Engineering
+                    </h1>
+                    <span className="relative flex h-2 w-2 mr-0.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" title="System active"></span>
+                    </span>
+                    <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[9px] uppercase tracking-[0.12em] px-2 py-0.5 rounded-md shadow-xs inline-flex items-center justify-center leading-none transition-all duration-300 ease-in-out cursor-pointer hover:scale-105 hover:shadow-[0_4px_12px_rgba(249,115,22,0.3)]">
+                      PORTAL
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -543,7 +574,7 @@ export default function App() {
                       key={tab.id}
                       id={`nav-btn-${tab.id}`}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-102 active:scale-95 cursor-pointer flex-shrink-0 border ${
+                      className={`group flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-102 active:scale-95 cursor-pointer flex-shrink-0 border ${
                         isActive
                           ? darkMode
                             ? 'bg-gradient-to-b from-orange-500/25 via-orange-500/15 to-orange-600/30 text-orange-400 border-t-orange-400/40 border-x-orange-500/20 border-b-orange-600/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_12px_rgba(249,115,22,0.25)] font-bold backdrop-blur-md'
@@ -553,10 +584,12 @@ export default function App() {
                             : 'text-slate-600 border-t-white border-x-white/80 border-b-slate-200/40 bg-gradient-to-b from-white/95 via-white/85 to-slate-100/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_2px_4px_rgba(0,0,0,0.02)] hover:text-blue-600 hover:from-sky-50 hover:to-blue-100/70 hover:shadow-md hover:border-b-blue-300 hover:shadow-blue-100/30'
                       }`}
                     >
-                      <span className={`${
+                      <span className={`transition-colors duration-300 ${
                         isActive 
                           ? darkMode ? 'text-orange-400' : 'text-orange-600' 
-                          : 'text-slate-400 dark:text-slate-500'
+                          : darkMode 
+                            ? 'text-slate-500 group-hover:text-slate-100' 
+                            : 'text-slate-400 group-hover:text-blue-600'
                       }`}>
                         {getTabIcon(tab.icon)}
                       </span>
@@ -576,7 +609,7 @@ export default function App() {
               </div>
             </div>
           </nav>
-
+ 
           {/* Mobile responsive Dropdown Menu (only visible below desktop size) */}
           <AnimatePresence>
             {isMobileMenuOpen && (
@@ -602,7 +635,7 @@ export default function App() {
                           setActiveTab(tab.id);
                           setIsMobileMenuOpen(false);
                         }}
-                        className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm md:text-base font-semibold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] active:scale-95 cursor-pointer border w-full text-left ${
+                        className={`group flex items-center space-x-3 px-4 py-3 rounded-xl text-sm md:text-base font-semibold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] active:scale-95 cursor-pointer border w-full text-left ${
                           isActive
                             ? darkMode
                               ? 'bg-gradient-to-b from-orange-500/25 via-orange-500/15 to-orange-600/30 text-orange-400 border-t-orange-400/40 border-x-orange-500/20 border-b-orange-600/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_4px_12px_rgba(249,115,22,0.25)] font-bold backdrop-blur-md'
@@ -612,10 +645,12 @@ export default function App() {
                               : 'text-slate-600 border-t-white border-x-white/80 border-b-slate-200/40 bg-gradient-to-b from-white/95 via-white/85 to-slate-100/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_2px_4px_rgba(0,0,0,0.02)] hover:text-blue-600 hover:from-sky-50 hover:to-blue-100/70 hover:shadow-md hover:border-b-blue-300 hover:shadow-blue-100/30'
                         }`}
                       >
-                        <span className={`${
+                        <span className={`transition-colors duration-300 ${
                           isActive 
                             ? darkMode ? 'text-orange-400' : 'text-orange-600' 
-                            : 'text-slate-400 dark:text-slate-500'
+                            : darkMode 
+                              ? 'text-slate-500 group-hover:text-slate-100' 
+                              : 'text-slate-400 group-hover:text-blue-600'
                         }`}>
                           {getTabIcon(tab.icon)}
                         </span>

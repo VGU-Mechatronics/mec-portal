@@ -60,6 +60,16 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
       href={card.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => {
+        if (card.url && (card.url.includes('drive.google.com') || card.url.includes('docs.google.com'))) {
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'document_download', {
+              'document_title': card.title,
+              'document_url': card.url
+            });
+          }
+        }
+      }}
       className={`group block p-5 rounded-xl border backdrop-blur-md transition-all duration-300 relative overflow-hidden h-full cursor-pointer ${
         darkMode
           ? 'bg-slate-900/60 border-slate-800 hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)]'
