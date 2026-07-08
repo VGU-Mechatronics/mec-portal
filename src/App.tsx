@@ -104,6 +104,8 @@ export default function App() {
   const [showHeader, setShowHeader] = useState<boolean>(true);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [selectedCurriculumYear, setSelectedCurriculumYear] = useState<string>('all');
+  const [selectedMajor, setSelectedMajor] = useState<string>('robotics');
   const searchContainerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -353,11 +355,15 @@ export default function App() {
     "The Mechatronics program is meticulously aligned with HAW Hamburg accreditation standards. It spans over 4 academic years (7-8 semesters), covering fundamental sciences, electrical systems, control loops, and robotics, culminating in a dual-degree Bachelor of Science award.".toLowerCase().includes(query) ||
     "Year 1 Foundations Maths, Physics, Electronics, CAD Drafting Year 2 Core Engineering Signals, Sensors, Fluidics, Manufacturing Labs Year 3 Advanced Systems Embedded Controllers, Robotics, PLC, DSP Year 4 Specialization Thesis, Elective Modules, Professional Internship".toLowerCase().includes(query);
 
-  const labSafetyMatches = !query ||
-    "Laboratory Safety & Conduct Guidelines".toLowerCase().includes(query) ||
-    "Mechatronics laboratories are equipped with heavy industrial robotics, advanced pneumatic grids, and high-voltage power electronics. Unsupervised work is strictly forbidden. Safety shoes, glasses, and professional lab coats are mandatory during all scheduled laboratory blocks.".toLowerCase().includes(query) ||
-    "Laser & PLC Safety training certificates required".toLowerCase().includes(query) ||
-    "All incident logs must be immediate-dispatched to Coordinator".toLowerCase().includes(query);
+  const foundationTransitionMatches = !query ||
+    "quy định để từ Foundation lên ngành (Semester 1)".toLowerCase().includes(query) ||
+    "quy định chuyển tiếp từ Foundation lên chuyên ngành (Semester 1)".toLowerCase().includes(query) ||
+    "IELTS 6.0 (nộp về VGU ASA trước 15.08)".toLowerCase().includes(query) ||
+    "passed >= 80% ECTS in the Foundation Semester".toLowerCase().includes(query) ||
+    "to progress to semester 4, students must fully complete the Basic Internship".toLowerCase().includes(query) ||
+    "Basic Internship".toLowerCase().includes(query) ||
+    "semester 4 progression".toLowerCase().includes(query) ||
+    "VGU ASA by 15.08".toLowerCase().includes(query);
 
   const thesisOverviewMatches = !query ||
     "Bachelor Thesis Guidelines".toLowerCase().includes(query) ||
@@ -1232,44 +1238,470 @@ export default function App() {
                       </div>
 
                       {curriculumOverviewMatches && (
-                        <div className={`p-6 rounded-xl border ${
-                          darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                        <div className={`p-6 rounded-2xl border transition-all duration-300 ${
+                          darkMode 
+                            ? 'bg-slate-900/40 border-slate-800/80 backdrop-blur-xl' 
+                            : 'bg-white border-slate-200 shadow-md'
                         }`}>
-                          <h3 className={`font-bold text-sm mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                            Core Engineering Curriculum Overview
-                          </h3>
-                          <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                            The Mechatronics program is meticulously aligned with HAW Hamburg accreditation standards. It spans over 4 academic years (7-8 semesters), covering fundamental sciences, electrical systems, control loops, and robotics, culminating in a dual-degree Bachelor of Science award.
-                          </p>
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-200/50 dark:border-slate-800/40">
+                            <div>
+                              <h3 className={`font-extrabold text-base tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                Mechatronics Curriculum Matrix
+                              </h3>
+                              <p className={`text-xs mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                Program Structure: 7 Semesters of study + 1 Foundation Semester · Total Credit Points: 210 CP · German Degree (HAW Hamburg)
+                              </p>
+                            </div>
+                            
+                            {/* Summary Badges */}
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-3 py-1 text-[11px] font-semibold font-mono rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                7 Semesters
+                              </span>
+                              <span className="px-3 py-1 text-[11px] font-semibold font-mono rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/25">
+                                210 CP Total
+                              </span>
+                              <span className="px-3 py-1 text-[11px] font-semibold font-mono rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                                Dual Degree
+                              </span>
+                            </div>
+                          </div>
 
-                          {/* Timeline representation */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-5 pt-4 border-t border-dashed border-slate-800">
-                            <div className="p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
-                              <span className="block font-mono text-[10px] text-orange-500 font-bold uppercase mb-1">Year 1</span>
-                              <span className={`block text-xs font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>Foundations</span>
-                              <span className={`block text-[10.5px] ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>Maths, Physics, Electronics, CAD Drafting</span>
-                            </div>
-                            <div className="p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
-                              <span className="block font-mono text-[10px] text-orange-500 font-bold uppercase mb-1">Year 2</span>
-                              <span className={`block text-xs font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>Core Engineering</span>
-                              <span className={`block text-[10.5px] ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>Signals, Sensors, Fluidics, Manufacturing Labs</span>
-                            </div>
-                            <div className="p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
-                              <span className="block font-mono text-[10px] text-orange-500 font-bold uppercase mb-1">Year 3</span>
-                              <span className={`block text-xs font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>Advanced Systems</span>
-                              <span className={`block text-[10.5px] ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>Embedded Controllers, Robotics, PLC, DSP</span>
-                            </div>
-                            <div className="p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
-                              <span className="block font-mono text-[10px] text-orange-500 font-bold uppercase mb-1">Year 4</span>
-                              <span className={`block text-xs font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>Specialization</span>
-                              <span className={`block text-[10.5px] ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>Thesis, Elective Modules, Professional Internship</span>
-                            </div>
+                          {/* Year Selector Tabs */}
+                          <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-slate-950/20 dark:bg-slate-950/40 border border-slate-800/20 mb-6">
+                            {[
+                              { id: 'all', label: 'All Semesters' },
+                              { id: 'foundation', label: 'Foundation' },
+                              { id: '1', label: 'Year 1' },
+                              { id: '2', label: 'Year 2' },
+                              { id: '3', label: 'Year 3' },
+                              { id: '4', label: 'Year 4' }
+                            ].map(year => (
+                              <button
+                                key={year.id}
+                                onClick={() => setSelectedCurriculumYear(year.id)}
+                                className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                                  selectedCurriculumYear === year.id
+                                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                                    : darkMode
+                                      ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                                      : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                                }`}
+                              >
+                                {year.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Dynamic Grid / Flow Layout of Semesters */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Foundation Semester Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === 'foundation') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode 
+                                  ? 'bg-gradient-to-b from-emerald-950/20 to-slate-900/30 border-emerald-900/40' 
+                                  : 'bg-gradient-to-b from-emerald-50/40 to-white border-emerald-100 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                                      <h4 className={`font-bold text-sm ${darkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
+                                        Foundation Semester
+                                      </h4>
+                                    </div>
+                                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                      Prep Year
+                                    </span>
+                                  </div>
+                                  <p className={`text-xs mb-4 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    Pre-requisite semester covering essential language proficiencies, cultural integration, and core science modules.
+                                  </p>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {[
+                                      "Physics",
+                                      "German",
+                                      "Engineering English",
+                                      "IELTS Academic English",
+                                      "Academic English",
+                                      "Introduction to German Culture",
+                                      "Behavioural Foundations in Germany"
+                                    ].map((subj, sIdx) => (
+                                      <div 
+                                        key={sIdx} 
+                                        className={`px-3 py-2 rounded-lg text-xs font-medium border flex items-center space-x-2 ${
+                                          darkMode 
+                                            ? 'bg-slate-900/60 border-slate-800/80 text-slate-300' 
+                                            : 'bg-white border-slate-200 text-slate-700 shadow-xs'
+                                        }`}
+                                      >
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/70" />
+                                        <span>{subj}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 1 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '1') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 1 (Year 1)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      22 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Mathematics 1", cp: 6 },
+                                      { name: "Programming techniques 1", cp: 5 },
+                                      { name: "Mathematics 2", cp: 6 },
+                                      { name: "Programming techniques 2", cp: 5 },
+                                      { name: "Basic Internship (Design Section)", cp: 0 },
+                                      { name: "Basic Internship (Electrical Section)", cp: 0 },
+                                      { name: "Basic Internship (Mechanical Section)", cp: 0 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                                        darkMode ? 'bg-slate-950/40 border-slate-900/60' : 'bg-slate-50/60 border-slate-100'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{mod.name}</span>
+                                        <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                                          mod.cp > 0 
+                                            ? 'bg-slate-500/10 text-slate-400' 
+                                            : 'bg-red-500/10 text-red-450'
+                                        }`}>
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 2 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '2') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 2 (Year 2)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      37 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Fundamental principles in electrical engineering 1", cp: 5 },
+                                      { name: "Fundamental principles in electrical engineering 2", cp: 5 },
+                                      { name: "Technical design 1", cp: 5 },
+                                      { name: "Technical design 2", cp: 6 },
+                                      { name: "Engineering mechanics A", cp: 6 },
+                                      { name: "Engineering mechanics B", cp: 5 },
+                                      { name: "Automation 1", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                                        darkMode ? 'bg-slate-950/40 border-slate-900/60' : 'bg-slate-50/60 border-slate-100'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 3 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '2') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 3 (Year 2)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      31 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Digital technology", cp: 5 },
+                                      { name: "Mechatronic system 1", cp: 5 },
+                                      { name: "Technical design 3", cp: 6 },
+                                      { name: "Electronics", cp: 5 },
+                                      { name: "Material science", cp: 5 },
+                                      { name: "Systems and software engineering", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                                        darkMode ? 'bg-slate-950/40 border-slate-900/60' : 'bg-slate-50/60 border-slate-100'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 4 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '3') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 4 (Year 3)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      30 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Production engineering", cp: 5 },
+                                      { name: "Mechatronic systems 2", cp: 5 },
+                                      { name: "Methodical design", cp: 5 },
+                                      { name: "Microprocessor technology", cp: 5 },
+                                      { name: "Sensors and electromagnetic compliance", cp: 5 },
+                                      { name: "Thermodynamics and fluid dynamics", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                                        darkMode ? 'bg-slate-950/40 border-slate-900/60' : 'bg-slate-50/60 border-slate-100'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 5 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '3') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 5 (Year 3)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      35 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Automation 2", cp: 5 },
+                                      { name: "Bachelor project", cp: 6 },
+                                      { name: "Bus Systems", cp: 5 },
+                                      { name: "Interdisciplinary courses", cp: 6 },
+                                      { name: "Mechatronic design", cp: 5 },
+                                      { name: "Report", cp: 8 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                                        darkMode ? 'bg-slate-950/40 border-slate-900/60' : 'bg-slate-50/60 border-slate-100'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 6 Card - Interactive Pathways */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '4') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                selectedMajor === 'drives'
+                                  ? darkMode ? 'bg-gradient-to-b from-amber-950/25 to-slate-900/30 border-amber-900/40' : 'bg-amber-50/40 border-amber-100'
+                                  : selectedMajor === 'vehicle'
+                                    ? darkMode ? 'bg-gradient-to-b from-emerald-950/20 to-slate-900/30 border-emerald-900/40' : 'bg-emerald-50/40 border-emerald-100'
+                                    : darkMode ? 'bg-gradient-to-b from-cyan-950/20 to-slate-900/30 border-cyan-900/40' : 'bg-cyan-50/40 border-cyan-100'
+                              }`}>
+                                <div>
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                                    <div>
+                                      <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                        Semester 6 (Year 4)
+                                      </h4>
+                                      <span className={`text-[10px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        Select your Major Pathway:
+                                      </span>
+                                    </div>
+                                    <span className="self-start sm:self-center px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      25 CP
+                                    </span>
+                                  </div>
+
+                                  {/* Major Selection Buttons */}
+                                  <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-slate-950/25 border border-slate-800/45 mb-4">
+                                    <button
+                                      onClick={() => setSelectedMajor('drives')}
+                                      className={`px-1 py-1.5 text-[9.5px] font-bold rounded transition-all ${
+                                        selectedMajor === 'drives'
+                                          ? 'bg-amber-600 text-white shadow-sm'
+                                          : darkMode ? 'text-amber-400/60 hover:text-amber-400 hover:bg-slate-900/40' : 'text-amber-700/70 hover:bg-slate-100'
+                                      }`}
+                                    >
+                                      Dynamics of Drives
+                                    </button>
+                                    <button
+                                      onClick={() => setSelectedMajor('vehicle')}
+                                      className={`px-1 py-1.5 text-[9.5px] font-bold rounded transition-all ${
+                                        selectedMajor === 'vehicle'
+                                          ? 'bg-emerald-600 text-white shadow-sm'
+                                          : darkMode ? 'text-emerald-400/60 hover:text-emerald-400 hover:bg-slate-900/40' : 'text-emerald-700/70 hover:bg-slate-100'
+                                      }`}
+                                    >
+                                      Vehicle & Aircraft
+                                    </button>
+                                    <button
+                                      onClick={() => setSelectedMajor('robotics')}
+                                      className={`px-1 py-1.5 text-[9.5px] font-bold rounded transition-all ${
+                                        selectedMajor === 'robotics'
+                                          ? 'bg-cyan-600 text-white shadow-sm'
+                                          : darkMode ? 'text-cyan-400/60 hover:text-cyan-400 hover:bg-slate-900/40' : 'text-cyan-700/70 hover:bg-slate-100'
+                                      }`}
+                                    >
+                                      Robotics
+                                    </button>
+                                  </div>
+
+                                  {/* Dynamic Modules Listing based on selected Major */}
+                                  <div className="space-y-2">
+                                    {selectedMajor === 'drives' && [
+                                      { name: "Machine tools", cp: 5 },
+                                      { name: "Electric drive technology", cp: 5 },
+                                      { name: "Fluid engineering", cp: 5 },
+                                      { name: "Power electronics", cp: 5 },
+                                      { name: "Dynamics of machines", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border border-amber-500/10 flex items-center justify-between ${
+                                        darkMode ? 'bg-amber-950/10' : 'bg-amber-50/30'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-amber-200' : 'text-amber-800'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+
+                                    {selectedMajor === 'vehicle' && [
+                                      { name: "Adaptronics", cp: 5 },
+                                      { name: "Electrical cabin systems", cp: 5 },
+                                      { name: "Active chassis systems", cp: 5 },
+                                      { name: "Technology of fibre-reinforced composites", cp: 5 },
+                                      { name: "Simulation and identification of dynamic systems", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border border-emerald-500/10 flex items-center justify-between ${
+                                        darkMode ? 'bg-emerald-950/10' : 'bg-emerald-50/30'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-emerald-200' : 'text-emerald-800'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+
+                                    {selectedMajor === 'robotics' && [
+                                      { name: "Actuators", cp: 5 },
+                                      { name: "Image processing", cp: 5 },
+                                      { name: "Industrial logistics", cp: 5 },
+                                      { name: "Robotics", cp: 5 },
+                                      { name: "Sensor technology", cp: 5 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-2.5 rounded-lg border border-cyan-500/10 flex items-center justify-between ${
+                                        darkMode ? 'bg-cyan-950/10' : 'bg-cyan-50/30'
+                                      }`}>
+                                        <span className={`text-xs font-semibold ${darkMode ? 'text-cyan-200' : 'text-cyan-800'}`}>{mod.name}</span>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-500">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Semester 7 Card */}
+                            {(selectedCurriculumYear === 'all' || selectedCurriculumYear === '4') && (
+                              <div className={`p-5 rounded-xl border transition-all duration-300 flex flex-col justify-between ${
+                                darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className={`font-bold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                      Semester 7 (Year 4)
+                                    </h4>
+                                    <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded bg-orange-500/10 text-orange-400 border border-orange-500/25">
+                                      30 CP
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {[
+                                      { name: "Industrial placement", cp: 15 },
+                                      { name: "Bachelor's thesis", cp: 15 }
+                                    ].map((mod, mIdx) => (
+                                      <div key={mIdx} className={`p-3 rounded-lg border border-orange-500/10 flex items-center justify-between ${
+                                        darkMode ? 'bg-orange-950/10' : 'bg-orange-50/10'
+                                      }`}>
+                                        <div>
+                                          <span className={`block text-xs font-bold ${darkMode ? 'text-orange-200' : 'text-orange-800'}`}>{mod.name}</span>
+                                          <span className={`block text-[10px] mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                            {mod.name === "Industrial placement" ? "12-week professional internship block" : "Final capstone project & defense"}
+                                          </span>
+                                        </div>
+                                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400">
+                                          {mod.cp} CP
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
 
                       {filteredCurriculumCards.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5" id="curriculum-cards-grid">
+                        <div 
+                          className={`grid gap-5 w-full transition-all duration-300 ${
+                            filteredCurriculumCards.length === 1 
+                              ? 'grid-cols-1 max-w-xl mx-auto' 
+                              : filteredCurriculumCards.length === 2 
+                                ? 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto' 
+                                : 'grid-cols-1 md:grid-cols-3'
+                          }`} 
+                          id="curriculum-cards-grid"
+                        >
                           {filteredCurriculumCards.map((card, idx) => (
                             <PortalCardComponent key={idx} card={card} darkMode={darkMode} />
                           ))}
@@ -1279,7 +1711,7 @@ export default function App() {
                   )}
 
                   {/* Part B: Regulations */}
-                  {(labSafetyMatches || filteredRegulationCards.length > 0) && (
+                  {(foundationTransitionMatches || filteredRegulationCards.length > 0) && (
                     <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-850">
                       <div className="flex items-center space-x-2">
                         <ShieldAlert className="w-5 h-5 text-orange-500" />
@@ -1290,24 +1722,87 @@ export default function App() {
                         </h2>
                       </div>
 
-                      {labSafetyMatches && (
-                        <div className={`p-6 rounded-xl border ${
-                          darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                      {foundationTransitionMatches && (
+                        <div className={`p-6 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+                          darkMode 
+                            ? 'bg-slate-900/40 border-slate-800 backdrop-blur-xl' 
+                            : 'bg-white border-slate-200 shadow-sm'
                         }`}>
-                          <h3 className={`text-base font-extrabold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                            Laboratory Safety & Conduct Guidelines
-                          </h3>
-                          <p className={`text-xs leading-relaxed mb-4 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                            Mechatronics laboratories are equipped with heavy industrial robotics, advanced pneumatic grids, and high-voltage power electronics. Unsupervised work is strictly forbidden. Safety shoes, glasses, and professional lab coats are mandatory during all scheduled laboratory blocks.
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <div className="flex items-center gap-2 p-2.5 rounded bg-orange-500/5 border border-orange-500/10">
-                              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping"></span>
-                              <span className={darkMode ? 'text-slate-300' : 'text-slate-700'}>Laser & PLC Safety training certificates required</span>
-                            </div>
-                            <div className="flex items-center gap-2 p-2.5 rounded bg-orange-500/5 border border-orange-500/10">
-                              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping"></span>
-                              <span className={darkMode ? 'text-slate-300' : 'text-slate-700'}>All incident logs must be immediate-dispatched to Coordinator</span>
+                          <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-500" />
+                          <div className="pl-2">
+                            <h3 className={`text-base font-extrabold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                              Academic Transition & Progression Regulations
+                            </h3>
+                            <p className={`text-xs leading-relaxed mb-5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                              To qualify for academic progression into subsequent semesters of the Mechatronics (MEC) program, students must successfully fulfill all of the following mandatory regulatory conditions:
+                            </p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                              {/* IELTS Requirement Card */}
+                              <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                                darkMode 
+                                  ? 'bg-slate-950/40 border-slate-900/80 hover:border-orange-500/20' 
+                                  : 'bg-slate-50/50 border-slate-150 shadow-xs hover:border-orange-500/30'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded bg-orange-500/10 text-orange-500 border border-orange-500/15">
+                                      Language Proficiency
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-rose-500 font-mono">Deadline: 15.08</span>
+                                  </div>
+                                  <h4 className={`font-bold text-sm mb-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                                    IELTS 6.0 Certificate
+                                  </h4>
+                                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    Students must achieve a minimum English proficiency of <strong className="text-orange-500">IELTS 6.0</strong> and submit a valid certificate copy directly to the <strong className="text-slate-900 dark:text-white">VGU ASA</strong> office no later than <strong className="border-b border-rose-400/40 text-rose-500">15.08</strong>.
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* ECTS Academic Requirement Card */}
+                              <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                                darkMode 
+                                  ? 'bg-slate-950/40 border-slate-900/80 hover:border-orange-500/20' 
+                                  : 'bg-slate-50/50 border-slate-150 shadow-xs hover:border-orange-500/30'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/15">
+                                      Academic Progress
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-emerald-500 font-mono">Passed &ge; 80% ECTS</span>
+                                  </div>
+                                  <h4 className={`font-bold text-sm mb-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                                    Complete &ge; 80% ECTS
+                                  </h4>
+                                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    Successfully pass a minimum of <strong className="text-emerald-500">&ge; 80% of total Credit Points (ECTS)</strong> required in the Foundation Semester curriculum. All component exams and coursework must have registered final grades.
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Basic Internship Requirement Card */}
+                              <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                                darkMode 
+                                  ? 'bg-slate-950/40 border-slate-900/80 hover:border-orange-500/20' 
+                                  : 'bg-slate-50/50 border-slate-150 shadow-xs hover:border-orange-500/30'
+                              }`}>
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded bg-blue-500/10 text-blue-500 border border-blue-500/15">
+                                      Progression Standard
+                                    </span>
+                                    <span className="text-[10px] font-semibold text-blue-500 font-mono">S4 Requirement</span>
+                                  </div>
+                                  <h4 className={`font-bold text-sm mb-1.5 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                                    Basic Internship Completion
+                                  </h4>
+                                  <p className={`leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    To qualify for progression into <strong className="text-blue-500">Semester 4</strong> of the curriculum, students must <strong className="text-blue-500">fully complete</strong> and obtain satisfactory grade verification for their Basic Internship block.
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1625,7 +2120,7 @@ export default function App() {
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.2 }}
                               >
-                                <div className={`px-5 pb-5 pt-1 text-xs leading-relaxed border-t ${
+                                <div className={`px-5 pb-5 pt-1 text-xs leading-relaxed border-t whitespace-pre-line ${
                                   darkMode ? 'text-slate-400 border-slate-800/60' : 'text-slate-600 border-slate-100'
                                 }`}>
                                   {item.answer}
@@ -1663,7 +2158,7 @@ export default function App() {
                   </p>
                   <p>
                     <span className="font-extrabold text-slate-950 dark:text-white border-b border-orange-500/30 pb-0.5 mr-1">Program Office:</span>{' '}
-                    <span className="font-semibold text-slate-950 dark:text-slate-100">Ms. Tran Thi Yen - Program Assistant</span> (Building 5, Room 511 ·{' '}
+                    <span className="font-semibold text-slate-950 dark:text-slate-100">Ms. Tran Thi Yen</span> (Building 5, Room 511 ·{' '}
                     <a href="mailto:yen.tt@vgu.edu.vn" className="text-orange-600 dark:text-orange-400 hover:underline">yen.tt@vgu.edu.vn</a>)
                   </p>
                 </div>
