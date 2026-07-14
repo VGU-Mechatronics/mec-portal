@@ -57,10 +57,14 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
 
   return (
     <a
-      href={card.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => {
+      href={card.isTba ? undefined : card.url}
+      target={card.isTba ? undefined : "_blank"}
+      rel={card.isTba ? undefined : "noopener noreferrer"}
+      onClick={(e) => {
+        if (card.isTba) {
+          e.preventDefault();
+          return;
+        }
         if (card.url && (card.url.includes('drive.google.com') || card.url.includes('docs.google.com'))) {
           if (typeof window !== 'undefined' && (window as any).gtag) {
             (window as any).gtag('event', 'document_download', {
@@ -70,7 +74,9 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
           }
         }
       }}
-      className={`group block p-5 rounded-xl border backdrop-blur-md transition-all duration-300 relative overflow-hidden h-full cursor-pointer ${
+      className={`group block p-5 rounded-xl border backdrop-blur-md transition-all duration-300 relative overflow-hidden h-full ${
+        card.isTba ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'
+      } ${
         darkMode
           ? 'bg-slate-900/60 border-slate-800 hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/30 hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)]'
           : 'bg-white border-slate-200 hover:bg-sky-100/50 hover:backdrop-blur-lg hover:border-sky-200/60 hover:shadow-md'
@@ -90,13 +96,15 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
               {getIconForType(card.type)}
               {card.type}
             </span>
-            <div className={`p-1.5 rounded-lg border transition-all duration-300 ${
-              darkMode 
-                ? 'bg-slate-950 border-slate-800 group-hover:bg-white/20 group-hover:border-white/30 group-hover:text-orange-400 text-slate-500' 
-                : 'bg-slate-50 border-slate-200 group-hover:bg-sky-100/50 group-hover:border-sky-200/60 group-hover:text-orange-500 text-slate-400'
-            }`}>
-              <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-            </div>
+            {!card.isTba && (
+              <div className={`p-1.5 rounded-lg border transition-all duration-300 ${
+                darkMode 
+                  ? 'bg-slate-950 border-slate-800 group-hover:bg-white/20 group-hover:border-white/30 group-hover:text-orange-400 text-slate-500' 
+                  : 'bg-slate-50 border-slate-200 group-hover:bg-sky-100/50 group-hover:border-sky-200/60 group-hover:text-orange-500 text-slate-400'
+              }`}>
+                <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              </div>
+            )}
           </div>
 
           {/* Title */}
@@ -117,11 +125,13 @@ export default function PortalCardComponent({ card, darkMode }: PortalCardCompon
         {/* Bottom Interactive Prompt */}
         <div className="pt-3 border-t border-transparent group-hover:border-orange-500/10 flex items-center gap-1.5" id="card-bottom-row">
           <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
-            darkMode ? 'text-slate-500 group-hover:text-orange-400' : 'text-slate-400 group-hover:text-orange-500'
+            card.isTba
+              ? (darkMode ? 'text-slate-500' : 'text-slate-400')
+              : (darkMode ? 'text-slate-500 group-hover:text-orange-400' : 'text-slate-400 group-hover:text-orange-500')
           }`}>
-            Open Document
+            {card.isTba ? '[TBA]' : 'Open Document'}
           </span>
-          <span className="text-orange-500 text-xs transition-transform duration-300 group-hover:translate-x-1">→</span>
+          {!card.isTba && <span className="text-orange-500 text-xs transition-transform duration-300 group-hover:translate-x-1">→</span>}
         </div>
       </div>
     </a>

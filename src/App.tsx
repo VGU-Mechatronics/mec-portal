@@ -106,6 +106,23 @@ export default function App() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [selectedCurriculumYear, setSelectedCurriculumYear] = useState<string>('all');
   const [selectedMajor, setSelectedMajor] = useState<string>('robotics');
+  
+  // Interactive Merit Scholarship Checklist states
+  const [chkPassedAll, setChkPassedAll] = useState<boolean>(false);
+  const [chkNoFail, setChkNoFail] = useState<boolean>(false);
+  const [chkNoRetake, setChkNoRetake] = useState<boolean>(false);
+  const [chkGPAVal, setChkGPAVal] = useState<string>('');
+  const [chkGPAScale, setChkGPAScale] = useState<'german' | 'vietnamese'>('german');
+  const [chkIELTS, setChkIELTS] = useState<boolean>(false);
+  const [chkNoDisciplinary, setChkNoDisciplinary] = useState<boolean>(false);
+  const [chkTuitionPaid, setChkTuitionPaid] = useState<boolean>(false);
+
+  // 4-Year Full Merit Scholarship states
+  const [chkFullIELTS, setChkFullIELTS] = useState<boolean>(false);
+  const [chkFullCatA, setChkFullCatA] = useState<boolean>(false);
+  const [chkFullCumulativeGPA, setChkFullCumulativeGPA] = useState<string>('');
+  const [chkFullGPAScale, setChkFullGPAScale] = useState<'german' | 'vietnamese'>('german');
+  const [scholarshipSubTab, setScholarshipSubTab] = useState<'rules' | 'full' | 'checker'>('rules');
   const searchContainerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -387,11 +404,19 @@ export default function App() {
     "Student Mobility Partnership with HAW Hamburg".toLowerCase().includes(query) ||
     "VGU MEC students have the exclusive opportunity to spend their 7th semester at the Hamburg University of Applied Sciences (HAW Hamburg) in Germany. During this exchange block, students complete elective coursework and their Bachelor Thesis in collaboration with state-of-the-art German laboratory teams or partner industrial corporations.".toLowerCase().includes(query);
 
+  const scholarshipOverviewMatches = !query ||
+    "VGU Merit Scholarship & 4-Year Full Scholarship Guidelines".toLowerCase().includes(query) ||
+    "eligibility conditions".toLowerCase().includes(query) ||
+    "German scale".toLowerCase().includes(query) ||
+    "Vietnamese scale".toLowerCase().includes(query) ||
+    "4-Year Scholarship".toLowerCase().includes(query) ||
+    "Top 5% Category A".toLowerCase().includes(query);
+
   const totalMatchesCount = query 
     ? (filteredInfoChannels.length + filteredScheduleCards.length + filteredExamCards.length + filteredCurriculumCards.length + 
        filteredRegulationCards.length + filteredFormCards.length + filteredThesisCards.length + 
        filteredInternshipCards.length + filteredGraduationCards.length + filteredScholarshipCards.length + 
-       filteredExchangeCards.length + filteredFaqItems.length)
+       filteredExchangeCards.length + filteredFaqItems.length + (scholarshipOverviewMatches ? 1 : 0))
     : 0;
 
   const getTabMatchesCount = (tabId: string) => {
@@ -408,7 +433,7 @@ export default function App() {
       case 'internship-thesis':
         return filteredThesisCards.length + filteredInternshipCards.length + filteredGraduationCards.length;
       case 'scholarship-exchange':
-        return filteredScholarshipCards.length + filteredExchangeCards.length;
+        return filteredScholarshipCards.length + filteredExchangeCards.length + (scholarshipOverviewMatches ? 1 : 0);
       case 'faq':
         return filteredFaqItems.length;
       default:
@@ -2022,7 +2047,7 @@ export default function App() {
                         <h2 className={`text-base font-extrabold tracking-tight ${
                           darkMode ? 'text-slate-200' : 'text-slate-800'
                         }`}>
-                          MEC & VGU Scholarship Framework
+                          Scholarships
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-5" id="scholarship-cards-grid">
@@ -2033,6 +2058,573 @@ export default function App() {
                     </div>
                   )}
 
+                  {/* VGU Merit Scholarship & 4-Year Full Scholarship Guidelines */}
+                  <div className={`relative overflow-hidden p-6 rounded-2xl border transition-all duration-300 ${
+                    darkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                  }`} id="merit-scholarship-dashboard-panel">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-500" />
+                    
+                    <div className="pl-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                        <div>
+                          <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded bg-orange-500/10 text-orange-500 border border-orange-500/15">
+                            Official Regulatory Policy
+                          </span>
+                          <h3 className={`text-base font-extrabold mt-1.5 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                            VGU Merit Scholarship & 4-Year Full Scholarship Guidelines
+                          </h3>
+                        </div>
+                        
+                        {/* Sub Tab Controls */}
+                        <div className={`flex p-0.5 rounded-lg border ${
+                          darkMode ? 'bg-slate-950 border-slate-850' : 'bg-slate-100 border-slate-200'
+                        }`}>
+                          <button
+                            onClick={() => setScholarshipSubTab('rules')}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all duration-200 ${
+                              scholarshipSubTab === 'rules'
+                                ? 'bg-orange-500 text-white shadow-xs'
+                                : `text-slate-500 hover:text-slate-800 dark:hover:text-slate-200`
+                            }`}
+                          >
+                            Annual Rules
+                          </button>
+                          <button
+                            onClick={() => setScholarshipSubTab('full')}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all duration-200 ${
+                              scholarshipSubTab === 'full'
+                                ? 'bg-orange-500 text-white shadow-xs'
+                                : `text-slate-500 hover:text-slate-800 dark:hover:text-slate-200`
+                            }`}
+                          >
+                            4-Year Full
+                          </button>
+                          <button
+                            onClick={() => setScholarshipSubTab('checker')}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all duration-200 ${
+                              scholarshipSubTab === 'checker'
+                                ? 'bg-orange-500 text-white shadow-xs'
+                                : `text-slate-500 hover:text-slate-800 dark:hover:text-slate-200`
+                            }`}
+                          >
+                            Eligibility Checker
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Tab 1: Rules & Categories */}
+                      {scholarshipSubTab === 'rules' && (
+                        <div className="space-y-6">
+                          <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                            Merit Scholarships at VGU are awarded based on academic performance from the previous semester or academic year to support outstanding engineering achievements in the Mechatronics (MEC) program.
+                          </p>
+
+                          {/* Scholarship Categories Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className={`p-4 rounded-xl border relative overflow-hidden ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900' : 'bg-slate-50/50 border-slate-150'
+                            }`}>
+                              <div className="absolute top-0 right-0 px-6 py-2 text-base font-mono font-bold bg-orange-500/10 text-orange-500 border-b border-l border-orange-500/15 rounded-bl-lg">
+                                Top 5%
+                              </div>
+                              <span className="text-xs font-bold text-orange-500 uppercase tracking-wider block mb-1">Category A</span>
+                              <div className={`text-2xl font-black mb-1.5 ${darkMode ? 'text-white' : 'text-slate-900'}`}>100% Scholarship</div>
+                            </div>
+
+                            <div className={`p-4 rounded-xl border relative overflow-hidden ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900' : 'bg-slate-50/50 border-slate-150'
+                            }`}>
+                              <div className="absolute top-0 right-0 px-6 py-2 text-base font-mono font-bold bg-blue-500/10 text-blue-500 border-b border-l border-blue-500/15 rounded-bl-lg">
+                                Next 5%
+                              </div>
+                              <span className="text-xs font-bold text-blue-500 uppercase tracking-wider block mb-1">Category B</span>
+                              <div className={`text-2xl font-black mb-1.5 ${darkMode ? 'text-white' : 'text-slate-900'}`}>50% Scholarship</div>
+                            </div>
+
+                            <div className={`p-4 rounded-xl border relative overflow-hidden ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900' : 'bg-slate-50/50 border-slate-150'
+                            }`}>
+                              <div className="absolute top-0 right-0 px-6 py-2 text-base font-mono font-bold bg-green-500/10 text-green-500 border-b border-l border-green-500/15 rounded-bl-lg">
+                                Next 5%
+                              </div>
+                              <span className="text-xs font-bold text-green-500 uppercase tracking-wider block mb-1">Category C</span>
+                              <div className={`text-2xl font-black mb-1.5 ${darkMode ? 'text-white' : 'text-slate-900'}`}>25% Scholarship</div>
+                            </div>
+                          </div>
+
+                          {/* Allocation Note */}
+                          <div className={`p-3.5 rounded-lg border flex items-start gap-2.5 ${
+                            darkMode ? 'bg-slate-950/20 border-slate-800/80 text-slate-300' : 'bg-slate-50/50 border-slate-200/60 text-slate-600'
+                          }`}>
+                            <Info className="w-4.5 h-4.5 text-orange-500 flex-shrink-0 mt-0.5" />
+                            <p className="text-[11px] leading-relaxed">
+                              <strong className={darkMode ? 'text-white' : 'text-slate-900'}>Allocation Formula:</strong> The number of scholarships for Categories A, B, and C corresponds to exactly the top 5%, next 5%, and subsequent 5% of the total number of currently registered students in each study program (excluding deferred students), rounded to the nearest whole number.
+                            </p>
+                          </div>
+
+                          {/* Eligibility Criteria Cards */}
+                          <div>
+                            <h4 className={`font-bold text-xs uppercase tracking-wider mb-3 ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+                              Mandatory Eligibility Conditions
+                            </h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>First-Attempt Only</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Only first exam attempts are counted for scholarship GPA calculation. Retake exam results are strictly excluded.</p>
+                                </div>
+                              </div>
+
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>Full Module Completion</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Must pass 100% of all required modules included in the specific list of modules for the semester or academic year under consideration.</p>
+                                </div>
+                              </div>
+
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>No Failed or Skipped Exams</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Students must not fail or skip any registered exam or course module in that list.</p>
+                                </div>
+                              </div>
+
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>Minimum Academic GPA</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Requires a minimum GPA of <span className="font-semibold text-orange-500">2.30 (German scale)</span> or <span className="font-semibold text-orange-500">7.70 (Vietnamese scale)</span>.</p>
+                                </div>
+                              </div>
+
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>IELTS Submission on Time</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Must submit IELTS Academic 6.0 (or equivalent) by August 31 of the 1st academic year.</p>
+                                </div>
+                              </div>
+
+                              <div className={`p-3 rounded-lg border flex gap-2.5 ${
+                                darkMode ? 'bg-slate-950/20 border-slate-900' : 'bg-slate-50/30 border-slate-150'
+                              }`}>
+                                <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className={darkMode ? 'text-white' : 'text-slate-900'}>No Disciplinary Violations</strong>
+                                  <p className={darkMode ? 'text-slate-400' : 'text-slate-500'}>No academic dishonesty or disciplinary warnings recorded. Tuition fee payments must be fully completed.</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Ties Note */}
+                            <div className={`mt-3 p-3 rounded-lg border ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900 text-slate-400' : 'bg-slate-50/40 border-slate-150 text-slate-500'
+                            }`}>
+                              <p className="text-[10.5px] leading-relaxed italic">
+                                * <strong className="font-bold">GPA Tie-breaker:</strong> In cases where multiple students achieve identical GPA scores, social contributions and participation in student activities/clubs may also be considered.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tab 2: 4-Year Full Scholarship */}
+                      {scholarshipSubTab === 'full' && (
+                        <div className="space-y-6">
+                          <div className={`p-4 rounded-xl border relative overflow-hidden ${
+                            darkMode ? 'bg-slate-950/40 border-slate-850' : 'bg-orange-50/20 border-orange-100 shadow-xs'
+                          }`}>
+                            <div className="absolute top-0 right-0 px-3 py-1 text-xs font-bold bg-orange-500/10 text-orange-500 border-b border-l border-orange-500/15 rounded-bl-lg">
+                              Full Ride
+                            </div>
+                            <h4 className={`text-base font-extrabold mb-1.5 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                              Full Merit Scholarship (4-Year Scholarship)
+                            </h4>
+                            <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                              Students may receive a 100% tuition scholarship for all four years of their Mechatronics studies if they satisfy the initial requirements and consistently meet the annual maintenance conditions.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {/* Enrollment Prerequisites */}
+                            <div className="space-y-3">
+                              <h5 className={`font-bold text-xs uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                                1. Freshman Eligibility Prerequisites
+                              </h5>
+                              <ul className="space-y-2 text-xs">
+                                <li className="flex gap-2">
+                                  <Check className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+                                  <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>
+                                    Have <strong className={darkMode ? 'text-white' : 'text-slate-900'}>IELTS Academic 7.0 or above</strong>.
+                                  </span>
+                                </li>
+                                <li className="flex gap-2">
+                                  <Check className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+                                  <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>
+                                    Received a <strong className={darkMode ? 'text-white' : 'text-slate-900'}>Category A Scholarship</strong> in the first year through admission <strong className="text-orange-500">Modes 1, 3, or 4</strong>.
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+
+                            {/* Maintenance Conditions */}
+                            <div className="space-y-3">
+                              <h5 className={`font-bold text-xs uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                                2. Annual Maintenance Requirements
+                              </h5>
+                              <p className={`text-[11px] leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                To maintain this scholarship, students must consistently satisfy VGU's yearly academic review with the following cumulative GPA targets:
+                              </p>
+                              <div className={`p-3 rounded-lg border border-dashed flex gap-2.5 items-center ${
+                                darkMode ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50/50 border-slate-200'
+                              }`}>
+                                <Award className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                                <div className="text-xs">
+                                  <span className={`block font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Cumulative GPA Target:</span>
+                                  <span className="text-orange-500 font-extrabold">≥ 1.70</span> (German scale) <span className="text-slate-400">or</span> <span className="text-orange-500 font-extrabold">≥ 8.70</span> (Vietnamese scale)
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className={`p-3 rounded-lg border text-xs leading-relaxed ${
+                            darkMode ? 'bg-slate-950/25 border-slate-900 text-slate-400' : 'bg-slate-50/30 border-slate-150 text-slate-500'
+                          }`}>
+                            <p>
+                              💡 <strong className="font-bold text-orange-500">Important Note:</strong> The 4-Year Full Merit Scholarship is audited annually. If a student falls below the 1.70 German / 8.70 Vietnamese scale GPA, the scholarship status is temporarily suspended until academic parameters are re-established.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tab 3: Eligibility Checker */}
+                      {scholarshipSubTab === 'checker' && (
+                        <div className="space-y-6">
+                          <p className={`text-xs leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                            Enter your academic data below to quickly verify your eligibility for the standard and 4-year VGU merit scholarship programs:
+                          </p>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Standard Merit Scholarship Form */}
+                            <div className={`p-5 rounded-xl border space-y-4 ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900' : 'bg-slate-50/40 border-slate-200'
+                            }`}>
+                              <h4 className={`font-bold text-sm border-b pb-2 ${darkMode ? 'text-white border-slate-800' : 'text-slate-950 border-slate-200'}`}>
+                                Standard Merit Scholarship Check
+                              </h4>
+                              
+                              <div className="space-y-3">
+                                {/* GPA Input */}
+                                <div>
+                                  <label className={`block text-xs font-semibold mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                                    Your Academic GPA
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      placeholder="e.g. 1.85 or 8.2"
+                                      value={chkGPAVal}
+                                      onChange={(e) => setChkGPAVal(e.target.value)}
+                                      className={`w-full px-3 py-1.5 text-xs rounded border outline-hidden transition-all duration-200 ${
+                                        darkMode 
+                                          ? 'bg-slate-950 border-slate-800 text-white focus:border-orange-500' 
+                                          : 'bg-white border-slate-200 text-slate-900 focus:border-orange-500 shadow-2xs'
+                                      }`}
+                                    />
+                                    <select
+                                      value={chkGPAScale}
+                                      onChange={(e) => setChkGPAScale(e.target.value as 'german' | 'vietnamese')}
+                                      className={`px-2.5 py-1.5 text-xs rounded border outline-hidden ${
+                                        darkMode 
+                                          ? 'bg-slate-950 border-slate-800 text-white' 
+                                          : 'bg-white border-slate-200 text-slate-900 shadow-2xs'
+                                      }`}
+                                    >
+                                      <option value="german">German Scale (0.7 - 4.0)</option>
+                                      <option value="vietnamese">Vietnamese (0 - 10)</option>
+                                    </select>
+                                  </div>
+                                  <p className="text-[10px] text-slate-500 mt-1 italic">
+                                    * Note: German scale uses lower values for higher grades (e.g., 1.0 is excellent, 2.30 is minimum pass for scholarship).
+                                  </p>
+                                </div>
+
+                                {/* Checkbox requirements */}
+                                <div className="space-y-2 pt-1 text-xs">
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkPassedAll}
+                                      onChange={(e) => setChkPassedAll(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I passed 100% of my required modules</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkNoFail}
+                                      onChange={(e) => setChkNoFail(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I did not fail or skip any exam or module</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkNoRetake}
+                                      onChange={(e) => setChkNoRetake(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Only first attempts used (no retake results counted)</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkIELTS}
+                                      onChange={(e) => setChkIELTS(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I submitted IELTS Academic 6.0+ on time (by August 31 of Year 1)</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkNoDisciplinary}
+                                      onChange={(e) => setChkNoDisciplinary(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I have zero disciplinary violations</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkTuitionPaid}
+                                      onChange={(e) => setChkTuitionPaid(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>My tuition and other financial obligations are fully completed</span>
+                                  </label>
+                                </div>
+                              </div>
+
+                              {/* Standard Calculation Output */}
+                              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                                {(() => {
+                                  const parsed = parseFloat(chkGPAVal);
+                                  const hasGPA = !isNaN(parsed) && chkGPAVal.trim() !== '';
+                                  const gpaMeets = hasGPA && (
+                                    chkGPAScale === 'german' ? parsed <= 2.30 && parsed >= 0.7 : parsed >= 7.70 && parsed <= 10.0
+                                  );
+                                  const othersMeets = chkPassedAll && chkNoFail && chkNoRetake && chkIELTS && chkNoDisciplinary && chkTuitionPaid;
+                                  
+                                  if (!chkGPAVal) {
+                                    return (
+                                      <div className={`p-3 rounded-lg text-xs flex gap-2 items-center ${
+                                        darkMode ? 'bg-slate-900 text-slate-400' : 'bg-slate-100 text-slate-600'
+                                      }`}>
+                                        <Info className="w-4 h-4 text-orange-500" />
+                                        <span>Please fill out your GPA and complete the checklist above.</span>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (!gpaMeets) {
+                                    return (
+                                      <div className="p-3 rounded-lg text-xs bg-red-500/10 border border-red-500/15 text-red-500 flex gap-2 items-start">
+                                        <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <strong className="font-bold">Ineligible (GPA Standard):</strong>
+                                          <p className="mt-0.5 leading-relaxed">
+                                            Your GPA ({parsed}) does not satisfy the minimum requirement of {chkGPAScale === 'german' ? '≤ 2.30 (German Scale)' : '≥ 7.70 (Vietnamese Scale)'}.
+                                          </p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (!othersMeets) {
+                                    return (
+                                      <div className="p-3 rounded-lg text-xs bg-amber-500/10 border border-amber-500/15 text-amber-500 flex gap-2 items-start">
+                                        <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <strong className="font-bold">Ineligible (Conditions):</strong>
+                                          <p className="mt-0.5 leading-relaxed">
+                                            Your GPA is high enough, but all regulatory conditions must be checked to qualify. Note that only first attempts are counted (no retakes).
+                                          </p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <div className="p-3 rounded-lg text-xs bg-emerald-500/10 border border-emerald-500/15 text-emerald-500 flex gap-2 items-start">
+                                      <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                      <div>
+                                        <strong className="font-bold">🎉 Eligible for Merit Scholarship!</strong>
+                                        <p className="mt-0.5 leading-relaxed">
+                                          Excellent work! You meet all mandatory conditions. Your final scholarship category (Category A, B, or C) will depend on your academic ranking within the top 15% of your registered study program.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+
+                            {/* 4-Year Full ride Form */}
+                            <div className={`p-5 rounded-xl border space-y-4 ${
+                              darkMode ? 'bg-slate-950/40 border-slate-900' : 'bg-slate-50/40 border-slate-200'
+                            }`}>
+                              <h4 className={`font-bold text-sm border-b pb-2 ${darkMode ? 'text-white border-slate-800' : 'text-slate-950 border-slate-200'}`}>
+                                4-Year Full Scholarship Audit
+                              </h4>
+                              
+                              <div className="space-y-3">
+                                {/* Cumulative GPA Input */}
+                                <div>
+                                  <label className={`block text-xs font-semibold mb-1 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                                    Your Cumulative Academic GPA (Maintenance)
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      placeholder="e.g. 1.55 or 8.9"
+                                      value={chkFullCumulativeGPA}
+                                      onChange={(e) => setChkFullCumulativeGPA(e.target.value)}
+                                      className={`w-full px-3 py-1.5 text-xs rounded border outline-hidden transition-all duration-200 ${
+                                        darkMode 
+                                          ? 'bg-slate-950 border-slate-800 text-white focus:border-orange-500' 
+                                          : 'bg-white border-slate-200 text-slate-900 focus:border-orange-500 shadow-2xs'
+                                      }`}
+                                    />
+                                    <select
+                                      value={chkFullGPAScale}
+                                      onChange={(e) => setChkFullGPAScale(e.target.value as 'german' | 'vietnamese')}
+                                      className={`px-2.5 py-1.5 text-xs rounded border outline-hidden ${
+                                        darkMode 
+                                          ? 'bg-slate-950 border-slate-800 text-white' 
+                                          : 'bg-white border-slate-200 text-slate-900 shadow-2xs'
+                                      }`}
+                                    >
+                                      <option value="german">German Scale (0.7 - 4.0)</option>
+                                      <option value="vietnamese">Vietnamese (0 - 10)</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                {/* Freshmen Criteria Checkboxes */}
+                                <div className="space-y-2 pt-1 text-xs">
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkFullIELTS}
+                                      onChange={(e) => setChkFullIELTS(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I have IELTS Academic 7.0 or above</span>
+                                  </label>
+
+                                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input
+                                      type="checkbox"
+                                      checked={chkFullCatA}
+                                      onChange={(e) => setChkFullCatA(e.target.checked)}
+                                      className="accent-orange-500 rounded"
+                                    />
+                                    <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>I received Category A scholarship in year 1 via Modes 1, 3, or 4</span>
+                                  </label>
+                                </div>
+                              </div>
+
+                              {/* Full Calculation Output */}
+                              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                                {(() => {
+                                  const parsed = parseFloat(chkFullCumulativeGPA);
+                                  const hasGPA = !isNaN(parsed) && chkFullCumulativeGPA.trim() !== '';
+                                  const maintenanceMeets = hasGPA && (
+                                    chkFullGPAScale === 'german' ? parsed <= 1.70 && parsed >= 0.7 : parsed >= 8.70 && parsed <= 10.0
+                                  );
+                                  
+                                  if (!chkFullCumulativeGPA) {
+                                    return (
+                                      <div className={`p-3 rounded-lg text-xs flex gap-2 items-center ${
+                                        darkMode ? 'bg-slate-900 text-slate-400' : 'bg-slate-100 text-slate-600'
+                                      }`}>
+                                        <Info className="w-4 h-4 text-orange-500" />
+                                        <span>Please enter your Cumulative GPA and verify freshmen status.</span>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (!chkFullIELTS || !chkFullCatA) {
+                                    return (
+                                      <div className="p-3 rounded-lg text-xs bg-red-500/10 border border-red-500/15 text-red-500 flex gap-2 items-start">
+                                        <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <strong className="font-bold">Ineligible (Initial Requirements):</strong>
+                                          <p className="mt-0.5 leading-relaxed">
+                                            The 4-Year Full Merit Scholarship is exclusive to students entering via admission Modes 1, 3, or 4 with IELTS 7.0+ who received Category A scholarship in their first year.
+                                          </p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (!maintenanceMeets) {
+                                    return (
+                                      <div className="p-3 rounded-lg text-xs bg-amber-500/10 border border-amber-500/15 text-amber-500 flex gap-2 items-start">
+                                        <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <div>
+                                          <strong className="font-bold">Suspended (GPA Maintenance Audit):</strong>
+                                          <p className="mt-0.5 leading-relaxed">
+                                            You met the initial criteria! However, your current Cumulative GPA ({parsed}) is below the required maintenance threshold of {chkFullGPAScale === 'german' ? '≤ 1.70 (German Scale)' : '≥ 8.70 (Vietnamese Scale)'}. Your 100% discount will be suspended for the next period.
+                                          </p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <div className="p-3 rounded-lg text-xs bg-emerald-500/10 border border-emerald-500/15 text-emerald-500 flex gap-2 items-start">
+                                      <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                      <div>
+                                        <strong className="font-bold">🎉 Eligible! Full Scholarship Maintained!</strong>
+                                        <p className="mt-0.5 leading-relaxed">
+                                          Superb! You satisfy both initial freshmen conditions and current academic maintenance parameters. Your 100% full-ride tuition exemption is successfully renewed for the upcoming academic period!
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Part B: Exchange */}
                   {(exchangeOverviewMatches || filteredExchangeCards.length > 0) && (
                     <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-850">
@@ -2041,7 +2633,7 @@ export default function App() {
                         <h2 className={`text-base font-extrabold tracking-tight ${
                           darkMode ? 'text-slate-200' : 'text-slate-800'
                         }`}>
-                          International Student Mobility & Exchanges
+                          Exchange Semester
                         </h2>
                       </div>
 
@@ -2153,13 +2745,13 @@ export default function App() {
                 <div className="text-xs leading-relaxed max-w-4xl text-slate-900 dark:text-slate-300 space-y-1.5" id="footer-office-info">
                   <p>
                     <span className="font-extrabold text-slate-950 dark:text-white border-b border-orange-500/30 pb-0.5 mr-1">Academic Coordinator:</span>{' '}
-                    <span className="font-semibold text-slate-950 dark:text-slate-100">Assoc. Prof. Do Xuan Phu</span> (Building 5, Room 419 ·{' '}
+                    <span className="font-semibold text-slate-950 dark:text-slate-100">Assoc. Prof. Do Xuan Phu</span> (Building 5, Room 420 ·{' '}
                     <a href="mailto:phu.dx@vgu.edu.vn" className="text-orange-600 dark:text-orange-400 hover:underline">phu.dx@vgu.edu.vn</a>)
                   </p>
                   <p>
                     <span className="font-extrabold text-slate-950 dark:text-white border-b border-orange-500/30 pb-0.5 mr-1">Program Office:</span>{' '}
-                    <span className="font-semibold text-slate-950 dark:text-slate-100">Ms. Tran Thi Yen</span> (Building 5, Room 511 ·{' '}
-                    <a href="mailto:yen.tt@vgu.edu.vn" className="text-orange-600 dark:text-orange-400 hover:underline">yen.tt@vgu.edu.vn</a>)
+                    <span className="font-semibold text-slate-950 dark:text-slate-100">Ms. Tran Thi Yen</span> (Building 5, Room 527 ·{' '}
+                    <a href="mailto:yen.tt@vgu.edu.vn" className="text-orange-600 dark:text-orange-400 hover:underline">mec@vgu.edu.vn</a>)
                   </p>
                 </div>
               </div>
@@ -2167,10 +2759,10 @@ export default function App() {
             
             <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-850 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs" id="footer-bottom-row">
               <p className="font-medium text-slate-900 dark:text-slate-300" id="footer-help-note">
-                Need help? Email the program office or make an appointment to come to <span className="font-extrabold text-slate-950 dark:text-white border-b border-orange-500/30 pb-0.5">Building 3, Room 511</span>.
+                Need help? Email the program office or come to <span className="font-extrabold text-slate-950 dark:text-white border-b border-orange-500/30 pb-0.5">Building 5, Room 527</span>.
               </p>
               <p className="font-mono text-[10.5px] font-bold tracking-wider text-slate-600 dark:text-slate-400 uppercase" id="footer-version-stamp">
-                Last updated: June 2026
+                Last updated: July 2026
               </p>
             </div>
           </div>

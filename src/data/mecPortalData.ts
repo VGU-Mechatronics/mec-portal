@@ -8,6 +8,7 @@ export interface PortalCard {
   description: string;
   type: 'PDF' | 'LINK' | 'DRIVE' | 'FORM' | 'EXCEL' | 'DOCX';
   url: string;
+  isTba?: boolean;
 }
 
 export interface FAQItem {
@@ -174,19 +175,14 @@ export const SCHOLARSHIP_CARDS: PortalCard[] = [
     title: "VGU Merit Scholarship Policy",
     description: "Rules governing merit-based tuition fee discounts (up to 100%) calculated from annual GPA rankings.",
     type: "DRIVE",
-    url: DUMMY_DRIVE_URL
+    url: "https://vgu.edu.vn/documents/48694/12962566/20260320_213_QD-DHVD_Ve+viec+ban+hanh+Quy+dinh+ve+hoc+bong+tai+nang+cac+chuong+trinh+dao+tao+trinh+do+DH-VIE.pdf/260ef17b-a749-48ca-80e1-bb89a8c429db"
   },
   {
-    title: "HAW Hamburg Exchange Scholarship Criteria",
+    title: "DAAD Scholarships",
     description: "Financial grants and sponsorship pathways for high-performing students completing their exchange semester in Germany.",
     type: "DRIVE",
-    url: DUMMY_DRIVE_URL
-  },
-  {
-    title: "Germany Scholarship (Deutschlandstipendium)",
-    description: "Socio-academic co-funded scholarships open to international students studying on joint German curricula.",
-    type: "DRIVE",
-    url: DUMMY_DRIVE_URL
+    url: DUMMY_DRIVE_URL,
+    isTba: true
   }
 ];
 
@@ -243,19 +239,22 @@ export const EXCHANGE_CARDS: PortalCard[] = [
     title: "HAW Hamburg Semester Exchange Guide",
     description: "Essential information regarding visa applications, student accommodation in Hamburg, cost of living, and health insurance.",
     type: "DRIVE",
-    url: DUMMY_DRIVE_URL
+    url: DUMMY_DRIVE_URL,
+    isTba: true
   },
   {
     title: "Learning Agreement Template",
     description: "Pre-approved subject mapping list to guarantee academic equivalence and seamless credit transfer on return.",
     type: "DRIVE",
-    url: DUMMY_DRIVE_URL
+    url: DUMMY_DRIVE_URL,
+    isTba: true
   },
   {
     title: "DAAD Exchange Scholarship Application",
     description: "How to apply for German Academic Exchange Service (DAAD) scholarships supporting long-term travel and living grants.",
     type: "DRIVE",
-    url: DUMMY_DRIVE_URL
+    url: DUMMY_DRIVE_URL,
+    isTba: true
   }
 ];
 
